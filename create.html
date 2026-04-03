@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Master Pro - Multi-Tab HD</title>
+    <title>CV Master Pro - HD Ads Ready</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
@@ -15,40 +15,20 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: #121212; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: #fff; }
 
-        #intro-screen {
-            position: fixed; inset: 0; background: linear-gradient(135deg, #8b0000 0%, #000 100%);
-            z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; transition: 0.5s ease;
-        }
+        .ad-slot { width: 100%; max-width: 728px; background: rgba(255,255,255,0.05); border: 1px dashed #444; text-align: center; margin: 15px 0; padding: 10px; font-size: 10px; color: #888; }
 
-        #app-content { display: none; width: 100%; max-width: 950px; padding: 15px; }
-        
-        .admin-panel { 
-            background: #fff; padding: 25px; border-radius: 15px; width: 100%; margin-bottom: 25px;
-            display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); color: #333;
-        }
-
-        @media (min-width: 768px) {
-            .admin-panel { display: grid; grid-template-columns: repeat(2, 1fr); }
-            .full-w { grid-column: 1 / -1; }
-        }
-
+        #intro-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #8b0000 0%, #000 100%); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transition: 0.5s ease; }
+        #app-content { display: none; width: 100%; max-width: 950px; padding: 10px; }
+        .admin-panel { background: #fff; padding: 25px; border-radius: 15px; width: 100%; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); color: #333; }
+        @media (min-width: 768px) { .admin-panel { display: grid; grid-template-columns: repeat(2, 1fr); } .full-w { grid-column: 1 / -1; } }
         .field { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 11px; font-weight: 800; color: #444; text-transform: uppercase; }
         input { padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 14px; width: 100%; }
-
         .section-tag { grid-column: 1/-1; font-weight: 900; color: var(--dark); border-bottom: 2px solid #eee; padding: 15px 0 5px; margin-top: 10px; font-size: 14px; text-transform: uppercase; }
 
-        /* CV Preview */
         .cv-viewport { width: 100%; display: flex; justify-content: center; padding-bottom: 60px; overflow-x: auto; }
-        #cv-render { 
-            background: white; width: 210mm; height: 297mm; display: flex !important; 
-            position: relative; overflow: hidden; flex-shrink: 0; color: #000;
-        }
-
-        @media (max-width: 900px) {
-            #cv-render { transform: scale(calc(100vw / 210mm - 0.1)); transform-origin: top center; margin-bottom: -150mm; }
-        }
+        #cv-render { background: white; width: 210mm; height: 297mm; display: flex !important; position: relative; overflow: hidden; flex-shrink: 0; color: #000; }
+        @media (max-width: 900px) { #cv-render { transform: scale(calc(100vw / 210mm - 0.1)); transform-origin: top center; margin-bottom: -150mm; } }
 
         .side { width: 35%; background: var(--dark); color: #fff; padding: 10mm 6mm; height: 100%; }
         .main { width: 65%; background: #fff; padding: 10mm 10mm; color: #333; height: 100%; }
@@ -57,7 +37,6 @@
         .n-info h1 { font-size: 24px; color: #fff; text-align: center; font-weight: 800; }
         .sh { font-size: 14px; text-transform: uppercase; border-bottom: 2px solid #fff; margin: 20px 0 10px; padding-bottom: 3px; color: #fff; font-weight: 800; }
         .ci { font-size: 12px; margin-bottom: 10px; display: flex; gap: 10px; color: #fff !important; }
-        
         .main-h { font-size: 17px; text-transform: uppercase; border-bottom: 2px solid #eee; margin: 20px 0 15px; color: var(--dark); font-weight: 800; }
         .list-box { margin-bottom: 15px; border-left: 3px solid var(--dark); padding-left: 12px; }
         .list-box b { font-size: 15px; display: block; color: #111; }
@@ -72,29 +51,31 @@
 </head>
 <body>
 
+    <div class="ad-slot">ADS PLACEHOLDER - TOP</div>
+
     <div id="intro-screen">
-        <i class="fas fa-layer-group fa-5x" style="color: #f1c40f; margin-bottom: 20px;"></i>
-        <h1>CV MASTER PRO V11</h1>
-        <p style="margin: 15px 0 30px; opacity:0.8;">Advanced Professional Resume Builder</p>
-        <button class="btn" style="background:white; color:#8b0000; width:220px;" onclick="openApp()">START BUILDING</button>
+        <i class="fas fa-money-bill-wave fa-5x" style="color: #f1c40f; margin-bottom: 20px;"></i>
+        <h1>CV MASTER PRO V12</h1>
+        <p style="margin: 15px 0 30px; opacity:0.8;">The Professional Way to Build & Download</p>
+        <button class="btn" style="background:white; color:#8b0000; width:220px;" onclick="openApp()">GET STARTED</button>
     </div>
 
     <div id="app-content">
         <div class="admin-panel">
-            <div class="section-tag">Personal Details</div>
-            <div class="field"><label>Full Name</label><input type="text" id="in-n" placeholder="Full Name" oninput="run()"></div>
-            <div class="field"><label>Father Name</label><input type="text" id="in-fn" placeholder="Father Name" oninput="run()"></div>
-            <div class="field"><label>Phone</label><input type="text" id="in-p" placeholder="+92 3XX XXXXXXX" oninput="run()"></div>
-            <div class="field"><label>Email</label><input type="text" id="in-e" placeholder="email@example.com" oninput="run()"></div>
-            <div class="field"><label>City</label><input type="text" id="in-city" placeholder="City" oninput="run()"></div>
-            <div class="field"><label>Nationality</label><input type="text" id="in-nat" placeholder="Pakistani" oninput="run()"></div>
-            <div class="field full-w"><label>Address</label><input type="text" id="in-addr" placeholder="House #, Street, Area" oninput="run()"></div>
-            <div class="field full-w"><label>Profile Photo</label><input type="file" id="u-img" accept="image/*"></div>
+            <div class="section-tag">Personal Data</div>
+            <div class="field"><label>Full Name</label><input type="text" id="in-n" oninput="run()"></div>
+            <div class="field"><label>Father Name</label><input type="text" id="in-fn" oninput="run()"></div>
+            <div class="field"><label>Phone</label><input type="text" id="in-p" oninput="run()"></div>
+            <div class="field"><label>Email</label><input type="text" id="in-e" oninput="run()"></div>
+            <div class="field"><label>City</label><input type="text" id="in-city" oninput="run()"></div>
+            <div class="field"><label>Nationality</label><input type="text" id="in-nat" oninput="run()"></div>
+            <div class="field full-w"><label>Address</label><input type="text" id="in-addr" oninput="run()"></div>
+            <div class="field full-w"><label>Photo</label><input type="file" id="u-img" accept="image/*"></div>
 
             <div class="section-tag">Education (Year | Degree | Institute)</div>
-            <div class="field"><input type="text" id="e1" placeholder="2022 | MCS | Karachi Uni" oninput="run()"></div>
-            <div class="field"><input type="text" id="e2" placeholder="2020 | BCS | University Name" oninput="run()"></div>
-            <div class="field"><input type="text" id="e3" placeholder="2018 | FSC | College Name" oninput="run()"></div>
+            <div class="field"><input type="text" id="e1" placeholder="2022 | MCS | University" oninput="run()"></div>
+            <div class="field"><input type="text" id="e2" placeholder="2020 | BCS | University" oninput="run()"></div>
+            <div class="field"><input type="text" id="e3" placeholder="2018 | FSC | College" oninput="run()"></div>
 
             <div class="section-tag">Courses (Year | Title | Platform)</div>
             <div class="field"><input type="text" id="c1" placeholder="2023 | Python | Coursera" oninput="run()"></div>
@@ -102,12 +83,14 @@
             <div class="field"><input type="text" id="c3" placeholder="2021 | SEO | DigiSkills" oninput="run()"></div>
 
             <div class="section-tag">Professional Expertise</div>
-            <div class="field"><input type="text" id="x1" placeholder="Expertise 1 (e.g. Video Editing)" oninput="run()"></div>
-            <div class="field"><input type="text" id="x2" placeholder="Expertise 2 (e.g. Python Dev)" oninput="run()"></div>
+            <div class="field"><input type="text" id="x1" placeholder="Expertise 1" oninput="run()"></div>
+            <div class="field"><input type="text" id="x2" placeholder="Expertise 2" oninput="run()"></div>
+
+            <div class="ad-slot" style="grid-column: 1/-1;">ADS PLACEHOLDER - MIDDLE</div>
 
             <div class="btn-box">
-                <button class="btn btn-unlock" id="b-unlock" onclick="unlock()">Process HD CV</button>
-                <button class="btn btn-dl" id="b-dl" onclick="savePdf()"><i class="fas fa-file-pdf"></i> Download HD PDF</button>
+                <button class="btn btn-unlock" id="b-unlock" onclick="unlock()">Unlock HD PDF (Free)</button>
+                <button class="btn btn-dl" id="b-dl" onclick="savePdf()"><i class="fas fa-file-pdf"></i> Download CV</button>
             </div>
         </div>
 
@@ -132,19 +115,16 @@
                 <div class="main">
                     <div class="main-h">Education</div>
                     <div id="out-edu"></div>
-                    
                     <div class="main-h" style="margin-top:20px;">Certifications</div>
                     <div id="out-crs"></div>
-                    
-                    <div class="main-h" style="margin-top:20px;">Professional Expertise</div>
-                    <div id="out-exp">
-                        <div class="exp-item"><i class="fas fa-caret-right" style="color:var(--dark)"></i> Expertise Item 1</div>
-                        <div class="exp-item"><i class="fas fa-caret-right" style="color:var(--dark)"></i> Expertise Item 2</div>
-                    </div>
+                    <div class="main-h" style="margin-top:20px;">Expertise</div>
+                    <div id="out-exp"></div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="ad-slot">ADS PLACEHOLDER - FOOTER</div>
 
     <script>
         function openApp() {
@@ -167,7 +147,7 @@
                     const t = v(id);
                     if(t.trim()) {
                         const p = t.split('|');
-                        h += `<div class="list-box"><b>${p[1] || 'Title'}</b><span>${p[2] || 'Institute'} | ${p[0] || 'Year'}</span></div>`;
+                        h += `<div class="list-box"><b>${p[1] || 'Title'}</b><span>${p[2] || 'Source'} | ${p[0] || 'Year'}</span></div>`;
                     }
                 });
                 document.getElementById(out).innerHTML = h;
@@ -178,7 +158,7 @@
                 ids.forEach(id => {
                     if(v(id).trim()) h += `<div class="exp-item"><i class="fas fa-caret-right" style="color:var(--dark)"></i> ${v(id)}</div>`;
                 });
-                document.getElementById(out).innerHTML = h || '<div class="exp-item">Your skills will appear here.</div>';
+                document.getElementById(out).innerHTML = h || '<div class="exp-item">Skills appear here.</div>';
             };
 
             fillList(['e1','e2','e3'], 'out-edu');
@@ -208,7 +188,7 @@
         };
 
         function unlock() {
-            document.getElementById('b-unlock').innerText = "Optimizing for HD...";
+            document.getElementById('b-unlock').innerText = "Processing HD Quality...";
             setTimeout(() => {
                 document.getElementById('b-unlock').style.display = 'none';
                 document.getElementById('b-dl').style.display = 'flex';
@@ -220,20 +200,8 @@
             window.scrollTo(0,0);
             const originalTransform = el.style.transform;
             el.style.transform = 'none';
-            
-            const opt = {
-                margin: 0,
-                filename: 'Premium_CV_Master.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            setTimeout(() => {
-                html2pdf().set(opt).from(el).save().then(() => {
-                    el.style.transform = originalTransform;
-                });
-            }, 500);
+            const opt = { margin: 0, filename: 'My_CV_HD.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 3, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            setTimeout(() => { html2pdf().set(opt).from(el).save().then(() => { el.style.transform = originalTransform; }); }, 500);
         }
     </script>
 </body>
