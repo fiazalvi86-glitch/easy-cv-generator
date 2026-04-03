@@ -3,60 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro CV Maker - 6 Sidebar Designs</title>
+    <title>Pro CV Maker - Ultra Responsive</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
 
-        /* Navigation Tabs for Mobile */
+        /* Tabs for Mobile */
         .tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 1000; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; color: #666; font-size: 14px; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; color: #666; }
         .tab.active { color: #2563eb; border-bottom: 3px solid #2563eb; }
 
         .main-container { display: flex; flex: 1; overflow: hidden; }
         .editor { width: 35%; background: white; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
-        .preview { width: 65%; background: #525659; overflow-y: auto; padding: 30px 10px; display: flex; justify-content: center; align-items: flex-start; }
+        .preview { width: 65%; background: #525659; overflow-y: auto; padding: 30px 10px; display: flex; justify-content: center; }
 
+        /* --- MOBILE FIXES --- */
         @media (max-width: 900px) {
             .main-container { flex-direction: column; overflow: visible; }
-            .editor, .preview { width: 100%; height: auto; display: none; padding: 10px; }
+            .editor, .preview { width: 100%; height: auto; display: none; }
             .active-p { display: block; }
-            .preview.active-p { display: flex; background: #f3f4f6; padding: 20px 0; }
+            .preview.active-p { display: flex; background: #eee; padding: 20px 0; justify-content: center; }
+            
+            /* Mobile par CV ko 1-Column kar dena taake text mix na ho */
             #cv-box { 
-                transform: scale(calc(100vw / 210mm - 0.06)); 
-                transform-origin: top left;
-                margin-left: 3vw;
-                margin-bottom: calc(296mm * (100vw / 210mm - 0.06) * -1 + 20px);
+                grid-template-columns: 100% !important; 
+                transform: scale(calc(100vw / 210mm - 0.08)); 
+                transform-origin: top center;
+                margin-bottom: calc(296mm * (100vw / 210mm - 0.08) * -1 + 40px);
             }
+            .sb-area { padding: 10mm !important; }
         }
 
-        /* Form Styling */
-        .group { background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #2563eb; }
-        label { display: block; font-size: 11px; font-weight: bold; color: #1e40af; margin-bottom: 5px; text-transform: uppercase; }
-        input, textarea, select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
-
-        /* --- CV BOX (A4) --- */
-        #cv-box { background: white; width: 210mm; min-height: 296mm; display: grid; grid-template-columns: 35% 65%; box-shadow: 0 0 15px rgba(0,0,0,0.3); }
+        /* --- CV DESIGN (A4) --- */
+        #cv-box { 
+            background: white; 
+            width: 210mm; 
+            min-height: 296mm; 
+            display: grid; 
+            grid-template-columns: 32% 68%; /* Laptop par Sidebar layout */
+            box-shadow: 0 0 20px rgba(0,0,0,0.4); 
+        }
         
-        /* Sidebar Styling */
-        .sb-area { padding: 15mm 8mm; color: white; display: flex; flex-direction: column; }
-        .cn-area { padding: 15mm 12mm; background: white; }
+        .sb-area { padding: 15mm 8mm; color: white; }
+        .cn-area { padding: 15mm 12mm; background: white; color: #333; }
 
-        /* Photo Fix */
         .photo { width: 130px; height: 130px; border-radius: 10px; object-fit: cover; border: 3px solid #ffc107; margin: 0 auto 20px; display: block; background: #eee; }
-        
-        /* Header Lines */
         .h-line { display: flex; align-items: center; gap: 8px; font-weight: bold; margin: 20px 0 10px; font-size: 14px; text-transform: uppercase; }
         .h-line hr { flex: 1; border: 0; border-top: 1px solid rgba(255,255,255,0.2); }
-        .h-line.dark { color: #333; }
-        .h-line.dark hr { border-top: 1px solid #ddd; }
+        .h-line.dark { color: #1e293b; }
+        .h-line.dark hr { border-top: 1px solid #ddd; opacity: 1; }
 
         .txt { font-size: 13px; line-height: 1.6; white-space: pre-line; margin-bottom: 8px; }
-        .sb-txt { color: #cbd5e1; font-size: 12px; }
+        .sb-txt { color: #cbd5e1; font-size: 12px; margin-bottom: 5px; }
 
-        /* Buttons */
         .dl-btn { width: 100%; padding: 15px; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px; }
         #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; }
     </style>
@@ -70,44 +71,31 @@
 
 <div class="main-container">
     <div class="editor active-p" id="e-sec">
-        <div class="group">
-            <label>Select Sidebar Theme</label>
-            <select id="theme" onchange="upd()">
-                <option value="navy">1. Modern Navy (Dark Blue)</option>
-                <option value="emerald">2. Emerald Professional (Green)</option>
-                <option value="royal">3. Royal Gold (Black & Gold)</option>
-                <option value="crimson">4. Crimson Corporate (Red)</option>
-                <option value="slate">5. Slate Minimal (Grey)</option>
-                <option value="purple">6. Creative Purple</option>
+        <div class="group" style="margin-bottom:20px;">
+            <label>Choose Theme</label>
+            <select id="theme" onchange="upd()" style="width:100%; padding:10px; border-radius:5px;">
+                <option value="navy">Modern Navy</option>
+                <option value="emerald">Emerald Green</option>
+                <option value="royal">Royal Gold</option>
+                <option value="slate">Slate Grey</option>
             </select>
-            <label>Profile Image</label>
+            <label>Photo</label>
             <input type="file" accept="image/*" onchange="hImg(event)">
         </div>
 
-        <div class="group">
-            <label>Personal Info</label>
-            <input type="text" id="name" placeholder="Full Name" oninput="upd()">
-            <input type="text" id="fname" placeholder="Father Name" oninput="upd()">
-            <input type="text" id="title" placeholder="Job Title" oninput="upd()">
-            <input type="text" id="phone" placeholder="Phone Number" oninput="upd()">
-            <input type="text" id="email" placeholder="Email Address" oninput="upd()">
-            <input type="text" id="addr" placeholder="City Address" oninput="upd()">
-            <input type="text" id="cnic" placeholder="CNIC" oninput="upd()">
-        </div>
-
-        <div class="group">
-            <label>Education & Experience</label>
-            <textarea id="obj" rows="3" placeholder="Objective..." oninput="upd()"></textarea>
-            <textarea id="edu" rows="3" placeholder="Education..." oninput="upd()"></textarea>
-            <textarea id="exp" rows="3" placeholder="Experience..." oninput="upd()"></textarea>
-        </div>
-
-        <div class="group">
-            <label>Other Info</label>
-            <input type="text" id="skills" placeholder="Skills" oninput="upd()">
-            <input type="text" id="proj" placeholder="Projects" oninput="upd()">
-            <input type="text" id="lang" placeholder="Languages" oninput="upd()">
-        </div>
+        <input type="text" id="name" placeholder="Full Name" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="fname" placeholder="Father Name" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="title" placeholder="Job Title" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="phone" placeholder="Phone" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="email" placeholder="Email" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="addr" placeholder="Address" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="cnic" placeholder="CNIC" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        
+        <textarea id="obj" rows="3" placeholder="Objective..." oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;"></textarea>
+        <textarea id="edu" rows="3" placeholder="Education..." oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;"></textarea>
+        <textarea id="exp" rows="3" placeholder="Experience..." oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;"></textarea>
+        <input type="text" id="skills" placeholder="Skills" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
+        <input type="text" id="lang" placeholder="Languages" oninput="upd()" style="width:100%; padding:10px; margin-bottom:10px;">
 
         <button class="dl-btn" onclick="start()">Download PDF</button>
         <div style="height:60px;"></div>
@@ -123,7 +111,7 @@
 
 <div id="ad-modal">
     <div style="background:white; padding:30px; border-radius:10px; text-align:center; width:90%; max-width:350px;">
-        <h3>Finalizing CV...</h3>
+        <h3>Generating PDF...</h3>
         <div style="height:200px; background:#eee; margin:20px 0; border:1px dashed #999; display:flex; align-items:center; justify-content:center;">AD SLOT</div>
         <button id="dl-ok" style="display:none; padding:12px 25px; background:#2563eb; color:white; border:none; border-radius:5px;" onclick="gen()">Download Now</button>
     </div>
@@ -135,9 +123,7 @@
         navy: { bg: "#1e293b", accent: "#ffc107" },
         emerald: { bg: "#064e3b", accent: "#10b981" },
         royal: { bg: "#000000", accent: "#d4af37" },
-        crimson: { bg: "#7f1d1d", accent: "#f87171" },
-        slate: { bg: "#334155", accent: "#38bdf8" },
-        purple: { bg: "#4c1d95", accent: "#c084fc" }
+        slate: { bg: "#334155", accent: "#38bdf8" }
     };
 
     function tab(t, b) {
@@ -168,10 +154,8 @@
             <p class="sb-txt"><i class="fas fa-envelope"></i> ${d('email')}</p>
             <p class="sb-txt"><i class="fas fa-map-marker-alt"></i> ${d('addr')}</p>
             ${d('cnic') ? `<p class="sb-txt"><i class="fas fa-id-card"></i> ${d('cnic')}</p>` : ''}
-            
             <div class="h-line" style="color:${th.accent}">SKILLS <hr></div>
             <p class="sb-txt">${d('skills')}</p>
-            
             <div class="h-line" style="color:${th.accent}">LANGUAGES <hr></div>
             <p class="sb-txt">${d('lang')}</p>
         `;
@@ -179,19 +163,13 @@
         m.innerHTML = `
             <h1 style="font-size:32px; color:#1e293b; margin-bottom:5px;">${d('name') || 'Your Name'}</h1>
             <p style="font-size:18px; color:#64748b; font-weight:bold;">${d('title') || 'Job Title'}</p>
-            ${d('fname') ? `<p class="txt" style="color:#333; margin:10px 0;"><b>Father Name:</b> ${d('fname')}</p>` : ''}
-            
-            <div class="h-line dark" style="border-bottom:2px solid ${th.bg}; padding-bottom:5px;">PROFILE <hr style="display:none"></div>
-            <p class="txt">${d('obj') || 'Enter your objective...'}</p>
-            
+            ${d('fname') ? `<p class="txt" style="color:#333; margin:10px 0;"><b>Father:</b> ${d('fname')}</p>` : ''}
+            <div class="h-line dark">PROFILE <hr></div>
+            <p class="txt">${d('obj') || 'Enter objective...'}</p>
             <div class="h-line dark">EDUCATION <hr></div>
             <p class="txt">${d('edu')}</p>
-            
             <div class="h-line dark">EXPERIENCE <hr></div>
             <p class="txt">${d('exp')}</p>
-            
-            <div class="h-line dark">PROJECTS <hr></div>
-            <p class="txt">${d('proj')}</p>
         `;
     }
 
@@ -203,7 +181,7 @@
     function gen() {
         document.getElementById('ad-modal').style.display = 'none';
         html2pdf().set({
-            margin: 0, filename: 'Professional_CV.pdf',
+            margin: 0, filename: 'CV.pdf',
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(document.getElementById('cv-box')).save();
