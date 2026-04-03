@@ -1,135 +1,207 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Your Professional CV - 2030 Edition</title>
+    <title>Pro CV Maker 2030 - Fiaz Alvi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #007bff; --dark: #333; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
-        .container { max-width: 900px; margin: auto; display: flex; flex-direction: column; gap: 20px; }
+        :root { --primary: #2563eb; --grey: #f3f4f6; --text: #1f2937; }
+        body { font-family: 'Poppins', sans-serif; background: #e5e7eb; margin: 0; padding: 10px; color: var(--text); }
         
-        /* Form Styling */
-        .editor-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .main-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1400px; margin: auto; }
         
-        /* Design Selection */
-        .design-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .design-opt { padding: 10px; border: 2px solid #eee; border-radius: 8px; text-align: center; cursor: pointer; font-size: 14px; }
-        .design-opt.active { border-color: var(--primary); background: #eef6ff; }
-
-        /* Preview Area (A4 Look) */
-        .preview-container { overflow-x: auto; background: #ddd; padding: 20px; border-radius: 10px; }
-        #cv-preview { background: white; width: 210mm; min-height: 297mm; padding: 20mm; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.2); transition: 0.3s; }
-
-        /* CV Styles (6 Types) */
-        .design-minimal { color: #333; }
-        .design-modern { border-top: 15px solid var(--primary); }
-        .design-executive { border-left: 20mm solid #2c3e50; padding-left: 10mm !important; }
-        .design-creative { background: #fffaf0; color: #d35400; }
-        .design-tech { background: #1a1a1a; color: #00ff00; } /* Matrix/Tech Look */
-        .design-bold { background: linear-gradient(135deg, #6e8efb, #a777e3); color: white; }
-
-        /* Image Resize */
-        .cv-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); margin-bottom: 10px; }
-
-        /* Download Button */
-        .download-btn { width: 100%; background: #28a745; color: white; padding: 18px; border: none; border-radius: 10px; font-size: 20px; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
-
-        /* Ad Pop-up Modal */
-        #ad-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; color: white; text-align: center; }
+        /* Input Form */
+        .editor { background: white; padding: 25px; border-radius: 12px; height: 90vh; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .section-title { background: var(--grey); padding: 8px; border-radius: 5px; margin: 20px 0 10px; font-weight: 600; font-size: 14px; color: var(--primary); text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
         
-        @media (max-width: 768px) { #cv-preview { transform: scale(0.4); transform-origin: top left; } .preview-container { height: 400px; } }
+        /* CV Preview Container */
+        .preview-pane { background: #525659; display: flex; justify-content: center; align-items: flex-start; padding: 20px; border-radius: 12px; height: 90vh; overflow-y: auto; }
+        
+        /* THE ACTUAL CV (A4 STAGING) */
+        #cv-render { 
+            background: white; 
+            width: 210mm; 
+            min-height: 296mm; /* Strictly A4 height to prevent 2nd page */
+            padding: 15mm; 
+            box-sizing: border-box; 
+            position: relative; 
+            font-size: 12px; 
+            line-height: 1.4;
+        }
+
+        /* 6 DESIGN CLASSES */
+        .design-standard { border-top: 15px solid var(--primary); }
+        .design-modern { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        .design-executive { background: #fdfdfd; border-left: 10px solid #1e293b; }
+        .design-clean { text-align: center; }
+        .design-sidebar { display: flex; flex-direction: row-reverse; gap: 20px; }
+        .design-minimal { border: 1px solid #eee; }
+
+        /* Photo Styles */
+        .photo-box { width: 110px; height: 110px; border-radius: 8px; object-fit: cover; background: #eee; margin-bottom: 10px; border: 2px solid var(--primary); }
+
+        /* Sidebar for Design 2 & 5 */
+        .cv-side { background: #f8fafc; padding: 15px; border-radius: 8px; height: 100%; }
+
+        .download-btn { width: 100%; background: #059669; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .main-wrapper { grid-template-columns: 1fr; }
+            .preview-pane { height: auto; padding: 0; background: transparent; }
+            #cv-render { transform: scale(0.45); transform-origin: top left; margin-bottom: -150mm; }
+        }
+
+        /* Ad Pop-up */
+        #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999; align-items: center; justify-content: center; text-align: center; color: white; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="editor-card">
-            <h2>Step 1: Details Enter Karein</h2>
-            <input type="file" accept="image/*" onchange="loadPhoto(event)">
-            <input type="text" id="name" placeholder="Pura Naam" oninput="update()">
-            <input type="text" id="job" placeholder="Profession (e.g. Graphic Designer)" oninput="update()">
-            <textarea id="summary" placeholder="Apne baare mein likhein..." rows="3" oninput="update()"></textarea>
-            <input type="text" id="skills" placeholder="Skills (Example: HTML, CSS, Sales)" oninput="update()">
-            
-            <h3>Step 2: Design Select Karein</h3>
-            <div class="design-picker">
-                <div class="design-opt active" onclick="setDesign('minimal', this)">Minimal</div>
-                <div class="design-opt" onclick="setDesign('modern', this)">Modern</div>
-                <div class="design-opt" onclick="setDesign('executive', this)">Executive</div>
-                <div class="design-opt" onclick="setDesign('creative', this)">Creative</div>
-                <div class="design-opt" onclick="setDesign('tech', this)">Tech</div>
-                <div class="design-opt" onclick="setDesign('bold', this)">Bold</div>
-            </div>
+<div class="main-wrapper">
+    <div class="editor">
+        <h2 style="margin-top:0">Pro CV Builder 2030</h2>
+        
+        <div class="section-title">1. Personal Info</div>
+        <input type="file" accept="image/*" onchange="previewImg(event)">
+        <input type="text" id="in-name" placeholder="Full Name" oninput="draw()">
+        <input type="text" id="in-fname" placeholder="Father Name (Optional)" oninput="draw()">
+        <input type="text" id="in-phone" placeholder="Phone Number" oninput="draw()">
+        <input type="text" id="in-email" placeholder="Email Address" oninput="draw()">
+        <input type="text" id="in-address" placeholder="Address (City)" oninput="draw()">
+        <input type="text" id="in-cnic" placeholder="CNIC (Optional)" oninput="draw()">
+
+        <div class="section-title">2. Profile Objective</div>
+        <textarea id="in-obj" placeholder="Objective (e.g. Seeking opportunity...)" rows="3" oninput="draw()"></textarea>
+
+        <div class="section-title">3. Education</div>
+        <textarea id="in-edu" placeholder="Matric/Inter - Institute - Year - Marks" rows="3" oninput="draw()"></textarea>
+
+        <div class="section-title">4. Skills & Languages</div>
+        <input type="text" id="in-skills" placeholder="Skills (MS Word, Excel, Python)" oninput="draw()">
+        <input type="text" id="in-langs" placeholder="Languages (Urdu, English)" oninput="draw()">
+
+        <div class="section-title">5. Experience & Projects</div>
+        <textarea id="in-exp" placeholder="Job Title - Company - Duration" rows="3" oninput="draw()"></textarea>
+        <textarea id="in-proj" placeholder="Project Name - Description" rows="2" oninput="draw()"></textarea>
+
+        <div class="section-title">6. Certificates</div>
+        <input type="text" id="in-cert" placeholder="Course Name - Institute" oninput="draw()">
+
+        <div class="section-title">Select Pro Design</div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
+            <button onclick="setD('standard')" style="padding:5px">Standard</button>
+            <button onclick="setD('modern')" style="padding:5px">Modern 2-Col</button>
+            <button onclick="setD('executive')" style="padding:5px">Executive</button>
+            <button onclick="setD('clean')" style="padding:5px">Clean Central</button>
+            <button onclick="setD('sidebar')" style="padding:5px">Right Side</button>
+            <button onclick="setD('minimal')" style="padding:5px">Minimal</button>
         </div>
 
-        <div class="preview-container">
-            <div id="cv-preview" class="design-minimal">
-                <img id="outPhoto" class="cv-photo" src="https://via.placeholder.com/100">
-                <h1 id="outName">Aapka Naam</h1>
-                <h3 id="outJob" style="color: var(--primary)">Job Title</h3>
-                <p id="outSummary">Professional summary yahan nazar aayegi...</p>
-                <hr>
-                <h4>Skills</h4>
-                <p id="outSkills">Aapki skills yahan ayengi.</p>
-            </div>
-        </div>
-
-        <button class="download-btn" onclick="showAd()">Download CV (PDF)</button>
+        <button class="download-btn" onclick="startDownload()">Download One-Page PDF</button>
     </div>
 
-    <div id="ad-modal">
-        <div>
-            <h2>Processing Your PDF...</h2>
-            <div style="width: 300px; height: 250px; background: #fff; color: #000; line-height: 250px; margin: 20px auto;">
-                [Google AdSense Ad Slot]
+    <div class="preview-pane">
+        <div id="cv-render" class="design-standard">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <h1 id="out-name" style="margin:0; font-size:28px; color:var(--primary)">Aapka Naam</h1>
+                    <p id="out-contact" style="margin:5px 0; color:#666">Phone | Email | Address</p>
+                </div>
+                <img id="out-img" src="" class="photo-box" style="display:none">
             </div>
-            <p>Wait 3 seconds...</p>
-            <button id="close-ad" style="display:none; padding: 10px 20px;" onclick="finishDownload()">Download Now</button>
+
+            <div id="layout-body">
+                <div class="main-content">
+                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Objective</h3>
+                    <p id="out-obj">Professional objective yahan ayega...</p>
+
+                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Education</h3>
+                    <div id="out-edu" style="white-space: pre-line;">Education details...</div>
+
+                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Experience</h3>
+                    <div id="out-exp" style="white-space: pre-line;">Work experience...</div>
+                    
+                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Projects</h3>
+                    <div id="out-proj" style="white-space: pre-line;">Projects details...</div>
+                </div>
+
+                <div class="side-content">
+                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Skills</h3>
+                    <p id="out-skills">Skills list...</p>
+                    
+                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Languages</h3>
+                    <p id="out-langs">Urdu, English</p>
+                    
+                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Personal Details</h3>
+                    <p id="out-personal">Father Name: - <br> CNIC: -</p>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        function update() {
-            document.getElementById('outName').innerText = document.getElementById('name').value || 'Aapka Naam';
-            document.getElementById('outJob').innerText = document.getElementById('job').value || 'Job Title';
-            document.getElementById('outSummary').innerText = document.getElementById('summary').value || 'Summary...';
-            document.getElementById('outSkills').innerText = document.getElementById('skills').value || 'Skills...';
-        }
+<div id="ad-modal">
+    <div style="background:white; padding:30px; color:black; border-radius:15px; width:320px">
+        <h3>Generating PDF...</h3>
+        <div style="width:100%; height:250px; background:#eee; margin:15px 0">AdSense Space</div>
+        <button id="dl-ready" style="display:none; padding:10px 20px" onclick="finalPDF()">Download Now</button>
+    </div>
+</div>
 
-        function loadPhoto(event) {
-            const reader = new FileReader();
-            reader.onload = () => document.getElementById('outPhoto').src = reader.result;
-            reader.readAsDataURL(event.target.files[0]);
-        }
+<script>
+    function draw() {
+        document.getElementById('out-name').innerText = document.getElementById('in-name').value || 'Aapka Naam';
+        
+        let contact = `${document.getElementById('in-phone').value} | ${document.getElementById('in-email').value} | ${document.getElementById('in-address').value}`;
+        document.getElementById('out-contact').innerText = contact;
+        
+        document.getElementById('out-obj').innerText = document.getElementById('in-obj').value;
+        document.getElementById('out-edu').innerText = document.getElementById('in-edu').value;
+        document.getElementById('out-exp').innerText = document.getElementById('in-exp').value;
+        document.getElementById('out-proj').innerText = document.getElementById('in-proj').value;
+        document.getElementById('out-skills').innerText = document.getElementById('in-skills').value;
+        document.getElementById('out-langs').innerText = document.getElementById('in-langs').value;
+        
+        let personal = `Father Name: ${document.getElementById('in-fname').value} <br> CNIC: ${document.getElementById('in-cnic').value}`;
+        document.getElementById('out-personal').innerHTML = personal;
+    }
 
-        function setDesign(style, el) {
-            document.querySelectorAll('.design-opt').forEach(opt => opt.classList.remove('active'));
-            el.classList.add('active');
-            document.getElementById('cv-preview').className = 'design-' + style;
-        }
+    function previewImg(e) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const img = document.getElementById('out-img');
+            img.src = reader.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
 
-        function showAd() {
-            document.getElementById('ad-modal').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('close-ad').style.display = 'inline-block';
-            }, 3000); // 3 seconds wait for Ad
-        }
+    function setD(d) {
+        document.getElementById('cv-render').className = 'design-' + d;
+    }
 
-        function finishDownload() {
-            document.getElementById('ad-modal').style.display = 'none';
-            const element = document.getElementById('cv-preview');
-            const opt = {
-                margin: 0,
-                filename: 'My_CV_2030.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
-    </script>
+    function startDownload() {
+        document.getElementById('ad-modal').style.display = 'flex';
+        setTimeout(() => { document.getElementById('dl-ready').style.display = 'block'; }, 2000);
+    }
+
+    function finalPDF() {
+        document.getElementById('ad-modal').style.display = 'none';
+        const element = document.getElementById('cv-render');
+        // Setting to force single page
+        const opt = {
+            margin: 0,
+            filename: 'Professional_CV_2030.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
 </body>
 </html>
