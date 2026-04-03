@@ -3,93 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master CV Maker - Ad Ready</title>
+    <title>CV Master Pro | Premium Resume Builder</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        :root { --main: #f1c40f; --dark: #1e293b; }
+        :root { --main: #f1c40f; --dark: #1e293b; --red: #e74c3c; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
-        /* Layout Centering */
-        body { background: #525659; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
-        .ad-banner { width: 100%; max-width: 728px; height: 90px; background: #fff; margin: 10px 0; display: flex; align-items: center; justify-content: center; color: #ccc; border: 1px solid #ddd; }
-        
-        #cv-container { 
-            background: white; 
-            width: 210mm; 
-            min-height: 296mm; 
-            display: flex; 
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            margin: 20px auto;
+        body { background: #333; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 15px; }
+
+        /* Top Banner Ad Slot */
+        .ad-top { width: 100%; max-width: 728px; height: 90px; background: #fff; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; font-size: 10px; color: #bbb; border-radius: 8px; }
+
+        /* Control Panel */
+        .panel { width: 100%; max-width: 850px; background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .panel-header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        .brand { font-weight: 700; color: var(--red); font-size: 22px; letter-spacing: 1px; }
+
+        /* Themes */
+        .theme-red { --dark: #7b0d0d; --main: #ffffff; --text-side: #fff; }
+        .theme-yellow { --dark: #1e293b; --main: #f1c40f; --text-side: #fff; }
+        .theme-gold { --dark: #000000; --main: #d4af37; --text-side: #fff; }
+
+        /* CV Preview Box */
+        .cv-scroll { width: 100%; display: flex; justify-content: center; overflow-x: auto; padding-bottom: 40px; }
+        #cv-box { 
+            background: white; width: 210mm; min-height: 296mm; display: flex !important; flex-direction: row !important; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.8); transform-origin: top center;
         }
 
-        /* Responsive Scaling for Mobile */
-        @media (max-width: 900px) {
-            body { padding: 10px; }
-            #cv-container { 
-                transform: scale(calc(100vw / 210mm - 0.1)); 
-                transform-origin: top center; 
-                margin-bottom: -150mm; /* Fix for whitespace */
-            }
-        }
+        /* CV Sections */
+        .sidebar { width: 35%; background: var(--dark); color: var(--text-side); padding: 15mm 7mm; transition: 0.4s; }
+        .main-content { width: 65%; background: white; padding: 15mm 10mm; color: #333; }
 
-        /* Sidebar & Content */
-        .side { width: 35%; background: var(--dark); color: white; padding: 15mm 8mm; }
-        .main { width: 65%; background: white; padding: 15mm 10mm; color: #333; }
-
-        .header-info h1 { color: var(--main); font-size: 28px; text-transform: uppercase; }
-        .header-info p { font-size: 14px; margin-bottom: 2px; }
-        .f-name { font-size: 12px; color: #cbd5e1; margin-bottom: 20px; font-style: italic; }
-
-        .sec-title { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
-        .sec-title i { color: var(--main); }
+        .profile-img { width: 140px; height: 140px; border-radius: 50%; border: 5px solid var(--main); object-fit: cover; margin: 0 auto 20px; display: block; background: #444; }
         
-        /* Ad Buttons */
-        .controls { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 999; }
-        .btn { padding: 12px 25px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .btn-ad { background: #e74c3c; color: white; }
-        .btn-dl { background: #27ae60; color: white; }
+        .name-tag h1 { font-size: 28px; color: var(--main); text-transform: uppercase; line-height: 1; margin-bottom: 5px; }
+        .name-tag p { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
+        .f-name { font-size: 12px; color: var(--main); font-style: italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px; margin-bottom: 25px; }
+
+        .section-h { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; }
+        .main-content .section-h { border-bottom: 2px solid #eee; color: var(--dark); }
+        .section-h i { color: var(--main); font-size: 14px; }
+
+        .job-card { border-left: 2px solid var(--main); padding-left: 15px; margin-left: 10px; margin-bottom: 20px; position: relative; }
+        .job-card::before { content: ''; width: 10px; height: 10px; background: var(--main); border-radius: 50%; position: absolute; left: -6px; top: 5px; }
+
+        /* Cropper Modal */
+        #crop-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
+        .crop-box { background: white; padding: 20px; border-radius: 10px; text-align: center; }
+        .btn-crop { padding: 10px 30px; background: var(--red); color: white; border: none; font-weight: bold; margin-top: 15px; border-radius: 5px; cursor: pointer; }
+
+        /* Ad Unlock Buttons */
+        .btn-group { grid-column: 1 / -1; display: flex; gap: 10px; }
+        .action-btn { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-red { background: var(--red); color: white; }
+        .btn-green { background: #27ae60; color: white; display: none; }
+        .btn-red:hover { background: #c0392b; }
+
+        /* Input Styling */
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px; font-size: 13px; }
+        label { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; }
+
+        @media (max-width: 900px) { #cv-box { transform: scale(calc(100vw / 210mm - 0.05)); } }
     </style>
 </head>
-<body>
+<body class="theme-red">
 
-    <div class="ad-banner">ADSENSE BANNER HERE</div>
+    <div class="ad-top">GOOGLE ADSENSE BANNER SLOT (728x90)</div>
 
-    <div id="cv-container">
-        <div class="side">
-            <div id="photo-area" style="text-align:center; margin-bottom:20px;">
-                <div style="width:140px; height:140px; border-radius:50%; border:5px solid var(--main); background:#444; margin:0 auto;"></div>
-            </div>
-            
-            <div class="header-info">
-                <h1 id="out-name">FIAZ</h1>
-                <p id="out-title">Professional Developer</p>
-                <div id="out-fname">S/O: Father's Name Here</div>
-            </div>
-            
-            <div class="sec-title"><i class="fas fa-phone"></i> <h3>Contact</h3></div>
-            <p style="font-size:12px;">+92 3xx xxxxxxx</p>
+    <div class="panel">
+        <div class="panel-header">
+            <div class="brand">CV MASTER PRO <i class="fas fa-certificate"></i></div>
+            <div style="font-size: 11px; color: #888;">Premium Auto-Video Creator Tool</div>
         </div>
 
-        <div class="main">
-            <div class="sec-title"><i class="fas fa-user"></i> <h3>Profile</h3></div>
-            <p style="font-size:13px;">Enter your summary here...</p>
+        <div>
+            <label>1. Choose Style</label>
+            <select onchange="document.body.className = this.value">
+                <option value="theme-red">Executive Red (Modern)</option>
+                <option value="theme-yellow">Dark & Yellow (Classic)</option>
+                <option value="theme-gold">Black & Gold (Premium)</option>
+            </select>
+        </div>
+
+        <div>
+            <label>2. Upload Photo</label>
+            <input type="file" id="pic-upload" accept="image/*">
+        </div>
+
+        <div><label>Full Name</label><input type="text" id="in-name" placeholder="Fiaz" oninput="u()"></div>
+        <div><label>Father Name</label><input type="text" id="in-fname" placeholder="Father Name" oninput="u()"></div>
+        <div><label>Job Title</label><input type="text" id="in-title" placeholder="Full Stack Developer" oninput="u()"></div>
+
+        <div class="btn-group">
+            <button class="action-btn btn-red" id="btn-unlock" onclick="startAd()">
+                <i class="fas fa-play-circle"></i> WATCH AD TO DOWNLOAD CV
+            </button>
+            <button class="action-btn btn-green" id="btn-dl" onclick="finalDownload()">
+                <i class="fas fa-cloud-download-alt"></i> DOWNLOAD PREMIUM PDF
+            </button>
         </div>
     </div>
 
-    <div class="controls">
-        <button class="btn btn-ad"><i class="fas fa-play"></i> Watch Ad to Unlock</button>
-        <button class="btn btn-dl" onclick="downloadPDF()"><i class="fas fa-download"></i> Download HQ PDF</button>
+    <div id="crop-modal">
+        <div class="crop-box">
+            <h3>Crop Your Profile Photo</h3>
+            <div id="crop-area" style="width: 300px; height: 300px; margin: 10px auto;"></div>
+            <button class="btn-crop" onclick="finishCrop()">DONE - APPLY PHOTO</button>
+        </div>
+    </div>
+
+    <div class="cv-scroll">
+        <div id="cv-box">
+            <div class="sidebar">
+                <img src="" id="cv-img" class="profile-img" style="display:none;">
+                <div id="img-placeholder" style="width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.1);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;border:5px solid var(--main);"><i class="fas fa-user-tie fa-4x"></i></div>
+                
+                <div class="name-tag">
+                    <h1 id="out-name">YOUR NAME</h1>
+                    <p id="out-title">Professional Title</p>
+                    <div id="out-fname" class="f-name">S/O: Father's Name</div>
+                </div>
+
+                <div class="section-h"><i class="fas fa-id-card"></i> <h3>Contact</h3></div>
+                <div style="font-size: 11px; line-height: 2;">
+                    <i class="fas fa-phone"></i> +92 3XX XXXXXXX<br>
+                    <i class="fas fa-envelope"></i> yourname@email.com<br>
+                    <i class="fas fa-map-marker-alt"></i> Karachi, Pakistan
+                </div>
+
+                <div class="section-h"><i class="fas fa-brain"></i> <h3>Expertise</h3></div>
+                <div style="font-size: 11px;">
+                    • Python Development<br>• Video Automation<br>• UI/UX Design
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="section-h"><i class="fas fa-bullseye"></i> <h3>Career Objective</h3></div>
+                <p style="font-size: 12px; line-height: 1.6; color: #555;">Result-oriented professional with a strong background in developing automated solutions for video production and media management.</p>
+
+                <div class="section-h"><i class="fas fa-briefcase"></i> <h3>Work Experience</h3></div>
+                <div class="job-card">
+                    <b style="font-size: 14px;">Senior Content Automator</b><br>
+                    <span style="font-size: 11px; color: #888;">2024 - Present</span>
+                    <p style="font-size: 12px; margin-top: 5px;">Led the development of Infographic Maker Pro for high-speed video ranking generation.</p>
+                </div>
+
+                <div class="section-h"><i class="fas fa-graduation-cap"></i> <h3>Academic Background</h3></div>
+                <div class="job-card">
+                    <b style="font-size: 14px;">BS Computer Science</b><br>
+                    <span style="font-size: 11px; color: #888;">University of Excellence</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        function downloadPDF() {
-            const element = document.getElementById('cv-container');
+        let cropper;
+        const upload = document.getElementById('pic-upload');
+
+        // 1. Live Update Logic
+        function u() {
+            document.getElementById('out-name').innerText = document.getElementById('in-name').value.toUpperCase() || "YOUR NAME";
+            document.getElementById('out-title').innerText = document.getElementById('in-title').value || "Professional Title";
+            document.getElementById('out-fname').innerText = document.getElementById('in-fname').value ? "S/O: " + document.getElementById('in-fname').value : "S/O: Father's Name";
+        }
+
+        // 2. Image Crop Logic
+        upload.onchange = function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('crop-modal').style.display = 'flex';
+                if (cropper) cropper.destroy();
+                cropper = new Croppie(document.getElementById('crop-area'), {
+                    viewport: { width: 150, height: 150, type: 'circle' },
+                    boundary: { width: 250, height: 250 },
+                    showZoomer: true
+                });
+                cropper.bind({ url: event.target.result });
+            }
+            reader.readAsDataURL(this.files[0]);
+        };
+
+        function finishCrop() {
+            cropper.result({ type: 'base64', size: 'viewport' }).then(res => {
+                const img = document.getElementById('cv-img');
+                img.src = res;
+                img.style.display = 'block';
+                document.getElementById('img-placeholder').style.display = 'none';
+                document.getElementById('crop-modal').style.display = 'none';
+            });
+        }
+
+        // 3. Ad Simulation Logic
+        function startAd() {
+            const btn = document.getElementById('btn-unlock');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Video Ad Playing... (5s)';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.style.display = 'none';
+                document.getElementById('btn-dl').style.display = 'flex';
+                alert("Congratulation! Premium Download Unlocked.");
+            }, 5000);
+        }
+
+        // 4. HQ Download Logic
+        function finalDownload() {
+            const element = document.getElementById('cv-box');
             html2pdf().set({
                 margin: 0,
-                filename: 'Premium_CV.pdf',
-                html2canvas: { scale: 3, useCORS: true },
+                filename: 'CV_Master_Pro.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             }).from(element).save();
         }
