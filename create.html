@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Master Pro - HD Builder</title>
+    <title>CV Master Pro - Single Page HD</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
@@ -13,118 +13,104 @@
     <style>
         :root { --main: #ffffff; --dark: #8b0000; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background: #1a1a1a; overflow-x: hidden; }
+        body { background: #121212; display: flex; flex-direction: column; align-items: center; }
 
         /* Intro Screen */
         #intro-screen {
             position: fixed; inset: 0; background: linear-gradient(135deg, #8b0000 0%, #000 100%);
             z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center; padding: 20px; transition: 0.6s ease;
+            color: white; text-align: center; transition: 0.5s;
         }
-        .start-btn { padding: 18px 50px; font-size: 1.3rem; background: #f1c40f; color: #000; border: none; border-radius: 50px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
 
-        /* App Content */
-        #app-content { display: none; padding: 15px; flex-direction: column; align-items: center; width: 100%; }
-
-        /* Form Styling */
+        /* Editor Panel */
+        #app-content { display: none; width: 100%; max-width: 1000px; padding: 20px; flex-direction: column; align-items: center; }
         .admin-panel { 
-            width: 100%; max-width: 950px; background: #fff; padding: 25px; border-radius: 15px; margin-bottom: 30px;
-            display: flex; flex-direction: column; gap: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            background: #fff; padding: 20px; border-radius: 12px; width: 100%; margin-bottom: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        @media (min-width: 768px) { .admin-panel { display: grid; grid-template-columns: repeat(3, 1fr); } .full-w { grid-column: 1 / -1; } }
 
         .field { display: flex; flex-direction: column; gap: 4px; }
         label { font-size: 11px; font-weight: 800; color: #555; text-transform: uppercase; }
-        input, select, textarea { padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 14px; transition: 0.3s; }
-        input:focus { border-color: var(--dark); outline: none; }
+        input, select { padding: 10px; border: 2px solid #eee; border-radius: 6px; font-size: 14px; }
 
-        /* CV Render Fix */
-        .cv-viewport { width: 100%; display: flex; justify-content: center; padding: 20px 0; overflow: hidden; }
+        /* THE CV - STRICT A4 */
+        .cv-viewport { width: 100%; display: flex; justify-content: center; padding-bottom: 50px; }
         #cv-render { 
-            background: white; width: 210mm; height: 297mm; display: flex !important; 
-            box-shadow: 0 0 60px rgba(0,0,0,1); position: relative; flex-shrink: 0;
+            background: white; 
+            width: 210mm; 
+            height: 297mm; /* Fixed A4 Height */
+            display: flex !important; 
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+            position: relative;
+            overflow: hidden; /* No extra content allowed */
         }
 
+        /* Scaling for Mobile Preview */
         @media (max-width: 900px) {
-            #cv-render { transform: scale(calc(100vw / 210mm - 0.1)); transform-origin: top center; margin-bottom: -150mm; }
+            #cv-render { transform: scale(calc(100vw / 210mm - 0.05)); transform-origin: top center; margin-bottom: -180mm; }
         }
 
-        /* CV Sections */
-        .side { width: 38%; background: var(--dark); color: #fff; padding: 12mm 8mm; height: 100%; }
-        .main { width: 62%; background: #fff; padding: 12mm 10mm; color: #333; height: 100%; }
+        /* Layout Styles */
+        .side { width: 35%; background: var(--dark); color: #fff; padding: 10mm 7mm; display: flex; flex-direction: column; }
+        .main { width: 65%; background: #fff; padding: 10mm 10mm; color: #333; }
 
-        .pic-c { width: 150px; height: 150px; border-radius: 50%; border: 5px solid var(--main); margin: 0 auto 25px; overflow: hidden; background: #333; display: flex; align-items: center; justify-content: center; }
+        .pic-c { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--main); margin: 0 auto 15px; overflow: hidden; background: #333; display: flex; align-items: center; justify-content: center; }
         .pic-c img { width: 100%; height: 100%; object-fit: cover; }
 
-        .n-info h1 { font-size: 28px; color: var(--main); text-transform: uppercase; line-height: 1; margin-bottom: 10px; font-weight: 800; text-align: center; }
-        .f-txt { font-size: 15px; font-style: italic; opacity: 0.9; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; text-align: center; }
+        .n-info h1 { font-size: 24px; color: var(--main); text-align: center; font-weight: 800; margin-bottom: 5px; }
+        .f-txt { font-size: 14px; text-align: center; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; }
 
-        .sh { font-size: 16px; text-transform: uppercase; border-bottom: 2px solid var(--main); margin: 25px 0 15px; padding-bottom: 5px; color: var(--main); font-weight: 800; }
-        .ci { font-size: 13px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 12px; line-height: 1.4; }
-        .ci i { margin-top: 3px; color: var(--main); font-size: 14px; }
+        .sh { font-size: 14px; text-transform: uppercase; border-bottom: 2px solid var(--main); margin: 15px 0 10px; padding-bottom: 3px; color: var(--main); font-weight: 800; }
+        .ci { font-size: 12px; margin-bottom: 8px; display: flex; gap: 10px; line-height: 1.3; }
 
-        .main-h { font-size: 18px; text-transform: uppercase; border-bottom: 3px solid #eee; margin: 25px 0 15px; padding-bottom: 5px; color: var(--dark); font-weight: 800; }
-        
-        .list-box { margin-bottom: 20px; border-left: 3px solid var(--dark); padding-left: 15px; position: relative; }
-        .list-box::before { content: ''; width: 10px; height: 10px; background: var(--dark); border-radius: 50%; position: absolute; left: -6.5px; top: 6px; }
-        .list-box b { font-size: 16px; display: block; color: #000; margin-bottom: 2px; }
-        .list-box span { font-size: 14px; color: #555; font-weight: 600; }
+        .main-h { font-size: 16px; text-transform: uppercase; border-bottom: 2px solid #eee; margin: 15px 0 10px; color: var(--dark); font-weight: 800; }
+        .list-box { margin-bottom: 12px; border-left: 3px solid var(--dark); padding-left: 12px; }
+        .list-box b { font-size: 15px; display: block; color: #000; }
+        .list-box span { font-size: 13px; color: #666; font-weight: 600; }
 
         /* Buttons */
-        .btn-box { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px; }
-        .btn { padding: 18px; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 15px; transition: 0.3s; }
+        .btn-box { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 8px; }
+        .btn { padding: 15px; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .btn-unlock { background: #e74c3c; color: white; }
         .btn-dl { background: #27ae60; color: white; display: none; }
+
+        .t-red { --dark: #8b0000; --main: #fff; }
+        .t-blue { --dark: #1a237e; --main: #00d2ff; }
+        .t-gold { --dark: #000; --main: #d4af37; }
     </style>
 </head>
 <body class="t-red">
 
     <div id="intro-screen">
-        <div class="intro-content">
-            <i class="fas fa-file-invoice fa-6x" style="color: #f1c40f; margin-bottom: 20px;"></i>
-            <h1>CV MASTER PRO</h1>
-            <p style="margin: 20px 0 40px; font-size: 1.2rem;">Premium, High-Resolution CV Builder for Professionals</p>
-            <button class="start-btn" onclick="openApp()">CREATE MY CV NOW <i class="fas fa-bolt"></i></button>
-        </div>
+        <i class="fas fa-id-card fa-5x" style="color: #f1c40f; margin-bottom: 20px;"></i>
+        <h1>CV MASTER PRO</h1>
+        <p style="margin: 15px 0 30px;">Single-Page Professional HD Resume Builder</p>
+        <button class="btn" style="background:#fff; color:#8b0000; width:250px;" onclick="openApp()">START BUILDING</button>
     </div>
 
     <div id="app-content">
         <div class="admin-panel">
-            <div style="grid-column: 1/-1; text-align: center; margin-bottom: 10px;">
-                <h2 style="color: var(--dark); font-size: 24px;">RESUME BUILDER DASHBOARD</h2>
-            </div>
-            
-            <div class="field"><label>Design</label>
-                <select onchange="document.body.className = this.value">
-                    <option value="t-red">Premium Red</option>
-                    <option value="t-blue">Executive Blue</option>
-                    <option value="t-gold">Royal Gold</option>
-                </select>
-            </div>
-            <div class="field"><label>Photo</label><input type="file" id="u-img" accept="image/*"></div>
             <div class="field"><label>Full Name</label><input type="text" id="in-n" placeholder="Full Name" oninput="run()"></div>
             <div class="field"><label>Father Name</label><input type="text" id="in-fn" placeholder="Father's Name" oninput="run()"></div>
-            <div class="field"><label>Date of Birth</label><input type="text" id="in-dob" placeholder="DD-MM-YYYY" oninput="run()"></div>
-            <div class="field"><label>Nationality</label><input type="text" id="in-nat" placeholder="Pakistani" oninput="run()"></div>
             <div class="field"><label>Phone</label><input type="text" id="in-p" placeholder="+92 3XX XXXXXXX" oninput="run()"></div>
             <div class="field"><label>Email</label><input type="text" id="in-e" placeholder="email@example.com" oninput="run()"></div>
-            <div class="field"><label>City</label><input type="text" id="in-city" placeholder="Karachi, Pakistan" oninput="run()"></div>
-            <div class="field"><label>Postal Code</label><input type="text" id="in-post" placeholder="75500" oninput="run()"></div>
-            <div class="field full-w"><label>Complete Address</label><input type="text" id="in-addr" placeholder="House #, Street Name, Area..." oninput="run()"></div>
+            <div class="field"><label>City</label><input type="text" id="in-city" placeholder="City Name" oninput="run()"></div>
+            <div class="field"><label>Nationality</label><input type="text" id="in-nat" placeholder="Pakistani" oninput="run()"></div>
+            <div class="field" style="grid-column: span 2;"><label>Address</label><input type="text" id="in-addr" placeholder="Complete Address" oninput="run()"></div>
+            
+            <div style="grid-column: 1/-1; font-weight:bold; border-bottom:1px solid #ddd; padding-top:10px;">Education (Year | Degree | Institute)</div>
+            <div class="field"><input type="text" id="e1" placeholder="2022 | MCS | Uni" oninput="run()"></div>
+            <div class="field"><input type="text" id="e2" placeholder="2020 | BCS | Uni" oninput="run()"></div>
+            <div class="field"><input type="text" id="e3" placeholder="2018 | FSC | College" oninput="run()"></div>
 
-            <div class="full-w" style="margin-top:10px; border-top:1px solid #eee; padding-top:15px;"><label style="color:var(--dark)">Education Details (Year | Degree | Institute)</label></div>
-            <div class="field"><input type="text" id="edu1" placeholder="2022 | MCS | University Name" oninput="run()"></div>
-            <div class="field"><input type="text" id="edu2" placeholder="2020 | BCS | University Name" oninput="run()"></div>
-            <div class="field"><input type="text" id="edu3" placeholder="2018 | Intermediate | College Name" oninput="run()"></div>
-
-            <div class="full-w" style="margin-top:10px; border-top:1px solid #eee; padding-top:15px;"><label style="color:var(--dark)">Courses & Certifications (Year | Course | Platform)</label></div>
-            <div class="field"><input type="text" id="crs1" placeholder="2023 | Python | Coursera" oninput="run()"></div>
-            <div class="field"><input type="text" id="crs2" placeholder="2022 | UI/UX | Udemy" oninput="run()"></div>
-            <div class="field"><input type="text" id="crs3" placeholder="2021 | Web Dev | Digiskills" oninput="run()"></div>
-
+            <div style="grid-column: 1/-1; font-weight:bold; border-bottom:1px solid #ddd; padding-top:10px;">Courses (Year | Course | Platform)</div>
+            <div class="field"><input type="text" id="c1" placeholder="2023 | Python | Coursera" oninput="run()"></div>
+            <div class="field"><input type="text" id="c2" placeholder="2022 | UI/UX | Udemy" oninput="run()"></div>
+            
             <div class="btn-box">
-                <button class="btn btn-unlock" id="b-unlock" onclick="startAd()">Unlock High Quality Download</button>
-                <button class="btn btn-dl" id="b-dl" onclick="savePdf()">Download HD PDF CV</button>
+                <button class="btn btn-unlock" id="b-unlock" onclick="startAd()">Unlock Single Page HD PDF</button>
+                <button class="btn btn-dl" id="b-dl" onclick="savePdf()">Download PDF Now</button>
             </div>
         </div>
 
@@ -133,49 +119,31 @@
                 <div class="side">
                     <div class="pic-c">
                         <img src="" id="out-img" style="display:none;">
-                        <i class="fas fa-user-circle fa-5x" id="def-ico" style="opacity:0.3"></i>
+                        <i class="fas fa-user-tie fa-4x" id="def-ico" style="opacity:0.2"></i>
                     </div>
                     <div class="n-info">
                         <h1 id="out-n">FULL NAME</h1>
                         <div class="f-txt" id="out-fn">S/O: Father's Name</div>
                     </div>
-
-                    <div class="sh">Personal Profile</div>
-                    <div class="ci"><i class="fas fa-calendar-alt"></i> <span id="out-dob">Date of Birth</span></div>
+                    <div class="sh">Contact Info</div>
+                    <div class="ci"><i class="fas fa-phone"></i> <span id="out-p">+92...</span></div>
+                    <div class="ci"><i class="fas fa-envelope"></i> <span id="out-e">email@abc.com</span></div>
                     <div class="ci"><i class="fas fa-flag"></i> <span id="out-nat">Nationality</span></div>
-                    <div class="ci"><i class="fas fa-phone"></i> <span id="out-p">+92 3XX XXXXXXX</span></div>
-                    <div class="ci"><i class="fas fa-envelope"></i> <span id="out-e">email@example.com</span></div>
-                    
-                    <div class="sh">Address & Location</div>
-                    <div class="ci"><i class="fas fa-city"></i> <span id="out-city">City Name</span></div>
-                    <div class="ci"><i class="fas fa-mail-bulk"></i> <span id="out-post">Postal Code</span></div>
-                    <div class="ci"><i class="fas fa-map-marker-alt"></i> <span id="out-addr">Detailed Address will appear here.</span></div>
+                    <div class="sh">Location</div>
+                    <div class="ci"><i class="fas fa-city"></i> <span id="out-city">City</span></div>
+                    <div class="ci"><i class="fas fa-map-marker-alt"></i> <span id="out-addr">Address Line</span></div>
                 </div>
-
                 <div class="main">
-                    <div class="main-h">Education Background</div>
-                    <div id="out-edu">
-                        <div class="list-box"><b>Master's Degree</b><span>Institute Name | 2022</span></div>
-                    </div>
-                    
-                    <div class="main-h">Courses & Certificates</div>
-                    <div id="out-crs">
-                        <div class="list-box"><b>Professional Certification</b><span>Platform Name | 2023</span></div>
-                    </div>
-                    
-                    <div class="main-h">Key Expertise</div>
-                    <div style="font-size: 14px; line-height: 1.8; color: #444; font-weight: 600;">
-                        • Advanced Automated Video Systems<br>• Professional UI/UX Design<br>• High-Speed Data Management<br>• Executive Level Technical Reporting
+                    <div class="main-h">Education</div>
+                    <div id="out-edu"></div>
+                    <div class="main-h" style="margin-top:25px;">Certifications</div>
+                    <div id="out-crs"></div>
+                    <div class="main-h" style="margin-top:25px;">Expertise</div>
+                    <div style="font-size:14px; line-height:1.8; color:#444; font-weight:600;">
+                        • Advanced System Automation<br>• Professional UI Development<br>• Technical Data Management<br>• HD Content Creation
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div id="m-crop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:20000; display:none; align-items:center; justify-content:center; flex-direction:column;">
-        <div style="background:white; padding:20px; border-radius:15px; text-align:center;">
-            <div id="c-area" style="width:300px; height:300px;"></div>
-            <button class="btn" style="background:#f1c40f; width:100%; margin-top:15px" onclick="applyCrop()">Apply Profile Picture</button>
         </div>
     </div>
 
@@ -185,65 +153,56 @@
             document.getElementById('app-content').style.display = 'flex';
         }
 
-        let cp;
         function run() {
             const v = (id) => document.getElementById(id).value;
             document.getElementById('out-n').innerText = v('in-n').toUpperCase() || "FULL NAME";
             document.getElementById('out-fn').innerText = v('in-fn') ? "S/O: " + v('in-fn') : "S/O: Father's Name";
-            document.getElementById('out-dob').innerText = v('in-dob') || "Date of Birth";
+            document.getElementById('out-p').innerText = v('in-p') || "+92...";
+            document.getElementById('out-e').innerText = v('in-e') || "email@abc.com";
             document.getElementById('out-nat').innerText = v('in-nat') || "Nationality";
-            document.getElementById('out-p').innerText = v('in-p') || "+92 3XX XXXXXXX";
-            document.getElementById('out-e').innerText = v('in-e') || "email@example.com";
-            document.getElementById('out-city').innerText = v('in-city') || "City Name";
-            document.getElementById('out-post').innerText = v('in-post') || "Postal Code";
-            document.getElementById('out-addr').innerText = v('in-addr') || "Detailed Address";
+            document.getElementById('out-city').innerText = v('in-city') || "City";
+            document.getElementById('out-addr').innerText = v('in-addr') || "Address Line";
 
-            const process = (ids, out) => {
+            const fill = (ids, out) => {
                 let h = '';
                 ids.forEach(id => {
-                    const txt = v(id);
-                    if(txt.trim()) {
-                        const p = txt.split('|');
-                        h += `<div class="list-box"><b>${p[1] || 'Degree/Course'}</b><span>${p[2] || 'Institute'} | ${p[0] || 'Year'}</span></div>`;
+                    const t = v(id);
+                    if(t.trim()) {
+                        const p = t.split('|');
+                        h += `<div class="list-box"><b>${p[1] || 'Title'}</b><span>${p[2] || 'Source'} | ${p[0] || 'Year'}</span></div>`;
                     }
                 });
-                if(h) document.getElementById(out).innerHTML = h;
+                document.getElementById(out).innerHTML = h;
             };
-            process(['edu1', 'edu2', 'edu3'], 'out-edu');
-            process(['crs1', 'crs2', 'crs3'], 'out-crs');
+            fill(['e1','e2','e3'], 'out-edu');
+            fill(['c1','c2'], 'out-crs');
         }
 
         document.getElementById('u-img').onchange = function(e) {
             const r = new FileReader();
             r.onload = (ev) => {
-                document.getElementById('m-crop').style.display = 'flex';
-                if(cp) cp.destroy();
-                cp = new Croppie(document.getElementById('c-area'), {
-                    viewport: { width: 160, height: 160, type: 'circle' },
-                    boundary: { width: 280, height: 280 }
-                });
-                cp.bind({ url: ev.target.result });
-            }
+                const modal = document.createElement('div');
+                modal.style = "position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:20000;display:flex;align-items:center;justify-content:center;flex-direction:column;";
+                modal.innerHTML = `<div id="ca" style="width:300px;height:300px;background:#fff;"></div><button class="btn" style="background:#f1c40f;margin-top:15px;width:300px" id="cp-btn">APPLY PHOTO</button>`;
+                document.body.appendChild(modal);
+                let cp = new Croppie(document.getElementById('ca'), { viewport:{width:150,height:150,type:'circle'}, boundary:{width:280,height:280} });
+                cp.bind({url:ev.target.result});
+                document.getElementById('cp-btn').onclick = () => {
+                    cp.result({type:'base64',size:'viewport'}).then(res => {
+                        document.getElementById('out-img').src = res;
+                        document.getElementById('out-img').style.display = 'block';
+                        document.getElementById('def-ico').style.display = 'none';
+                        document.body.removeChild(modal);
+                    });
+                };
+            };
             r.readAsDataURL(e.target.files[0]);
         };
 
-        function applyCrop() {
-            cp.result({ type: 'base64', size: 'viewport' }).then(res => {
-                document.getElementById('out-img').src = res;
-                document.getElementById('out-img').style.display = 'block';
-                document.getElementById('def-ico').style.display = 'none';
-                document.getElementById('m-crop').style.display = 'none';
-            });
-        }
-
         function startAd() {
             const b = document.getElementById('b-unlock');
-            b.innerHTML = '<i class="fas fa-sync fa-spin"></i> GENERATING HD PDF...';
-            setTimeout(() => {
-                b.style.display = 'none';
-                document.getElementById('b-dl').style.display = 'block';
-                alert("Success! High Quality PDF is ready.");
-            }, 3000);
+            b.innerText = "Processing HD Quality...";
+            setTimeout(() => { b.style.display='none'; document.getElementById('b-dl').style.display='block'; }, 2000);
         }
 
         function savePdf() {
@@ -253,15 +212,15 @@
             
             const opt = {
                 margin: 0,
-                filename: 'CV_Master_Pro_Ultimate.pdf',
+                filename: 'Professional_CV.pdf',
                 image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 4, useCORS: true, letterRendering: true },
+                html2canvas: { scale: 3, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(el).toPdf().get('pdf').then(() => {
+            html2pdf().set(opt).from(el).save().then(() => {
                 el.style.transform = originalTransform;
-            }).save();
+            });
         }
     </script>
 </body>
