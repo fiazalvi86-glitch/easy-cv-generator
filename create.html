@@ -3,224 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro CV Maker - Mobile Optimized</title>
+    <title>Ultimate CV Maker - Fixed</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
 
-        /* App Container */
-        .app-container { display: flex; height: 100vh; overflow: hidden; }
-        .editor-side { width: 35%; background: white; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
-        .preview-side { width: 65%; background: #525659; display: flex; justify-content: center; overflow-y: auto; padding: 40px 20px; }
+        /* Navigation Tabs for Mobile */
+        .tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 100; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: bold; color: #666; }
+        .tab.active { color: #2563eb; border-bottom: 3px solid #2563eb; }
 
-        /* Mobile Optimization (Tabs & Scaling) */
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+        .editor { width: 40%; background: #fff; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
+        .preview { width: 60%; background: #525659; overflow-y: auto; padding: 40px 20px; display: flex; justify-content: center; }
+
         @media (max-width: 900px) {
-            .app-container { flex-direction: column; height: 100vh; }
-            .editor-side { width: 100%; height: calc(100vh - 60px); display: block; }
-            .preview-side { width: 100%; height: calc(100vh - 60px); display: none; padding: 10px; align-items: flex-start; justify-content: center; overflow: auto; }
-            
-            /* CV Scaling for Mobile Screen */
-            #cv-render { 
-                transform: scale(0.42); 
-                transform-origin: top center; 
-                margin: 0 auto;
-                box-shadow: none;
-            }
-            
-            .mobile-tabs { display: flex; height: 60px; background: white; border-top: 2px solid #ddd; position: fixed; bottom: 0; width: 100%; z-index: 1000; }
-            .tab-btn { flex: 1; border: none; background: none; font-weight: 600; font-size: 14px; color: #666; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-            .tab-btn i { font-size: 18px; margin-bottom: 2px; }
-            .tab-btn.active { color: #2563eb; }
+            .main-container { flex-direction: column; overflow: visible; }
+            .editor, .preview { width: 100%; height: auto; overflow: visible; }
+            .preview { display: none; padding: 10px; background: #eee; }
+            .preview.active-tab { display: flex; }
+            .editor.active-tab { display: block; }
         }
 
-        @media (min-width: 901px) { .mobile-tabs { display: none; } }
+        /* Form Styling */
+        h2 { margin-bottom: 15px; color: #333; }
+        .group { background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #2563eb; }
+        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #1e40af; text-transform: uppercase; }
+        input, textarea, select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
 
-        /* Editor Styles */
-        .section-title { background: #eef2ff; padding: 10px; border-radius: 6px; margin: 20px 0 10px; font-weight: 600; color: #1e40af; border-left: 4px solid #2563eb; font-size: 13px; }
-        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        /* --- CV DESIGN (A4) --- */
+        #cv-box { background: #fff; width: 210mm; min-height: 296mm; padding: 0; position: relative; box-shadow: 0 0 15px rgba(0,0,0,0.3); }
         
-        /* CV Render (A4) */
-        #cv-render { 
-            background: white; 
-            width: 210mm; 
-            min-height: 296mm; 
-            display: block; 
-            position: relative; 
-            box-shadow: 0 0 30px rgba(0,0,0,0.5); 
-        }
-
-        /* Image Crop/Fit Style */
-        .cv-photo { 
-            width: 130px; height: 130px; 
-            border-radius: 10px; 
-            object-fit: cover; /* This fixes the stretching/distortion */
-            object-position: center; 
-            border: 3px solid #ffc107; 
-            background: #eee;
-            display: block;
-            margin: 0 auto 20px;
-        }
-
-        /* Design Specifics */
-        .d-sidebar { display: grid; grid-template-columns: 35% 65%; min-height: 296mm; }
-        .d-sidebar .left { background: #1e293b; color: white; padding: 20mm 10mm; }
-        .d-sidebar .right { padding: 20mm 12mm; background: white; }
-        .cv-header-line { display: flex; align-items: center; gap: 10px; margin: 15px 0 10px; color: #ffc107; font-weight: 600; }
-        .cv-header-line hr { flex: 1; border: 0; border-top: 1px solid #ddd; opacity: 0.3; }
-
-        .download-btn { width: 100%; background: #059669; color: white; padding: 18px; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        /* Design 1: Sidebar (Modern) */
+        .layout-sidebar { display: grid; grid-template-columns: 35% 65%; min-height: 296mm; }
+        .sidebar { background: #1e293b; color: #fff; padding: 20mm 10mm; }
+        .content { padding: 20mm 15mm; }
         
-        /* Ad Modal */
-        #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
+        /* Other Designs Classes */
+        .layout-classic { padding: 20mm; border-top: 15px solid #1e40af; }
+        .layout-minimal { padding: 20mm; text-align: center; }
+        .layout-exec { padding: 20mm; border-left: 15mm solid #000; }
+        .layout-clean { padding: 20mm; background: #fafafa; }
+        .layout-tech { padding: 20mm; border: 3px solid #2563eb; }
+
+        .photo-circ { width: 120px; height: 120px; border-radius: 10px; object-fit: cover; border: 3px solid #ffc107; margin-bottom: 20px; background: #ddd; display: block; }
+        .h-line { display: flex; align-items: center; gap: 10px; color: #ffc107; font-weight: bold; margin: 20px 0 10px; text-transform: uppercase; }
+        .h-line hr { flex: 1; border: 0; border-top: 1px solid #ddd; opacity: 0.3; }
+        .text-p { font-size: 13px; line-height: 1.6; color: #444; white-space: pre-line; margin-bottom: 10px; }
+
+        .dl-btn { width: 100%; padding: 15px; background: #059669; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 20px; }
+        #ad-box { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; color: #fff; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="editor-side" id="edit-p">
-        <h2 style="margin-bottom:15px;">CV Generator</h2>
-        
-        <div class="section-title">Design & Photo</div>
-        <select id="sel-design" onchange="setD(this.value)">
-            <option value="sidebar">Modern Sidebar</option>
-            <option value="classic">Classic Navy</option>
-            <option value="minimal">Minimalist</option>
-            <option value="exec">Executive Gold</option>
-        </select>
-        <p style="font-size:12px; color:#666; margin-bottom:5px;">Upload Profile Photo:</p>
-        <input type="file" accept="image/*" onchange="loadI(event)">
+<div class="tabs">
+    <div class="tab active" onclick="showTab('edit', this)">1. Details</div>
+    <div class="tab" onclick="showTab('view', this)">2. Preview</div>
+</div>
 
-        <div class="section-title">Personal Details</div>
-        <input type="text" id="in-name" placeholder="Full Name" oninput="upd()">
-        <input type="text" id="in-fname" placeholder="Father Name" oninput="upd()">
-        <input type="text" id="in-phone" placeholder="Phone (e.g. 0300-1234567)" oninput="upd()">
-        <input type="text" id="in-email" placeholder="Email Address" oninput="upd()">
-        <input type="text" id="in-addr" placeholder="City Address" oninput="upd()">
-        <input type="text" id="in-cnic" placeholder="CNIC (Optional)" oninput="upd()">
+<div class="main-container">
+    <div class="editor active-tab" id="edit-sect">
+        <h2>CV Details</h2>
+        <div class="group">
+            <label>Design Style</label>
+            <select id="set-design" onchange="update()">
+                <option value="sidebar">1. Modern Sidebar</option>
+                <option value="classic">2. Classic Navy</option>
+                <option value="minimal">3. Minimalist</option>
+                <option value="exec">4. Executive Gold</option>
+                <option value="clean">5. Clean Grey</option>
+                <option value="tech">6. Tech Bold</option>
+            </select>
+            <label>Profile Image</label>
+            <input type="file" accept="image/*" onchange="handleImg(event)">
+        </div>
 
-        <div class="section-title">Education & Experience</div>
-        <textarea id="in-edu" placeholder="Matric/Inter - School - Year" rows="3" oninput="upd()"></textarea>
-        <textarea id="in-exp" placeholder="Job Title - Company - Duration" rows="3" oninput="upd()"></textarea>
+        <div class="group">
+            <label>Personal Info</label>
+            <input type="text" id="name" placeholder="Full Name" oninput="update()">
+            <input type="text" id="fname" placeholder="Father Name" oninput="update()">
+            <input type="text" id="title" placeholder="Job Title (e.g. Accountant)" oninput="update()">
+            <input type="text" id="phone" placeholder="Phone Number" oninput="update()">
+            <input type="text" id="email" placeholder="Email Address" oninput="update()">
+            <input type="text" id="addr" placeholder="Address / City" oninput="update()">
+            <input type="text" id="cnic" placeholder="CNIC (Optional)" oninput="update()">
+        </div>
 
-        <div class="section-title">Skills & Languages</div>
-        <input type="text" id="in-skills" placeholder="Skills (MS Word, Excel)" oninput="upd()">
-        <input type="text" id="in-lang" placeholder="Languages (Urdu, English)" oninput="upd()">
+        <div class="group">
+            <label>Profile Objective</label>
+            <textarea id="obj" rows="3" placeholder="I am a motivated..." oninput="update()"></textarea>
+        </div>
 
-        <button class="download-btn" onclick="showA()">Download CV (PDF)</button>
-        <div style="height:80px"></div> </div>
+        <div class="group">
+            <label>Education & Experience</label>
+            <textarea id="edu" rows="3" placeholder="Degree - School - Year" oninput="update()"></textarea>
+            <textarea id="exp" rows="3" placeholder="Job - Company - Duration" oninput="update()"></textarea>
+        </div>
 
-    <div class="preview-side" id="view-p">
-        <div id="cv-render" class="d-sidebar">
+        <div class="group">
+            <label>Skills, Projects & Languages</label>
+            <input type="text" id="skills" placeholder="Skills (Word, Excel, Python)" oninput="update()">
+            <input type="text" id="proj" placeholder="Project Name - Brief" oninput="update()">
+            <input type="text" id="cert" placeholder="Certificates" oninput="update()">
+            <input type="text" id="lang" placeholder="Languages" oninput="update()">
+        </div>
+
+        <button class="dl-btn" onclick="startDL()">Download PDF</button>
+        <div style="height: 50px;"></div>
+    </div>
+
+    <div class="preview" id="view-sect">
+        <div id="cv-box">
             </div>
     </div>
 </div>
 
-<div class="mobile-tabs">
-    <button class="tab-btn active" id="btn-edit" onclick="switchT('edit')"><i class="fas fa-edit"></i>Info</button>
-    <button class="tab-btn" id="btn-view" onclick="switchT('view')"><i class="fas fa-eye"></i>Preview</button>
-</div>
-
-<div id="ad-modal">
-    <div style="background:white; padding:30px; border-radius:15px; color:black; width:90%; max-width:350px;">
-        <h3>Generating PDF...</h3>
-        <div style="height:200px; background:#f3f4f6; margin:20px 0; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center;">Ad Slot</div>
-        <button id="dl-ready" style="display:none; padding:12px 25px; background:#2563eb; color:white; border:none; border-radius:5px;" onclick="makePDF()">Download Now</button>
+<div id="ad-box">
+    <div style="background: white; color: #000; padding: 30px; border-radius: 10px; text-align: center; width: 90%; max-width: 350px;">
+        <h3>Processing PDF...</h3>
+        <div style="height: 200px; background: #eee; margin: 20px 0; border: 1px dashed #999; display: flex; align-items: center; justify-content: center;">Ad Slot</div>
+        <button id="dl-final" style="display: none; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 5px;" onclick="genPDF()">Save Now</button>
     </div>
 </div>
 
 <script>
-    let currentD = 'sidebar';
-    let userImg = '';
+    let imgData = "";
 
-    function switchT(t) {
-        document.getElementById('edit-p').style.display = (t === 'edit') ? 'block' : 'none';
-        document.getElementById('view-p').style.display = (t === 'view') ? 'flex' : 'none';
-        document.getElementById('btn-edit').classList.toggle('active', t === 'edit');
-        document.getElementById('btn-view').classList.toggle('active', t === 'view');
+    function showTab(t, btn) {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        if(t === 'edit') {
+            document.getElementById('edit-sect').classList.add('active-tab');
+            document.getElementById('view-sect').classList.remove('active-tab');
+        } else {
+            document.getElementById('edit-sect').classList.remove('active-tab');
+            document.getElementById('view-sect').classList.add('active-tab');
+        }
     }
 
-    function setD(val) { currentD = val; upd(); }
-
-    function loadI(e) {
-        const reader = new FileReader();
-        reader.onload = () => { userImg = reader.result; upd(); };
-        reader.readAsDataURL(e.target.files[0]);
+    function handleImg(e) {
+        const r = new FileReader();
+        r.onload = () => { imgData = r.result; update(); };
+        r.readAsDataURL(e.target.files[0]);
     }
 
-    function upd() {
-        const v = (id) => document.getElementById(id).value;
-        const render = document.getElementById('cv-render');
-        render.className = 'd-' + currentD;
-
-        const photoHtml = userImg ? `<img src="${userImg}" class="cv-photo">` : `<div class="cv-photo" style="display:flex; align-items:center; justify-content:center; color:#999; font-size:12px;">No Photo</div>`;
-
+    function update() {
+        const d = (id) => document.getElementById(id).value;
+        const style = d('set-design');
+        const box = document.getElementById('cv-box');
+        
+        const photo = imgData ? `<img src="${imgData}" class="photo-circ">` : `<div class="photo-circ" style="display:flex;align-items:center;justify-content:center;color:#999">No Photo</div>`;
+        
         let html = '';
-        if(currentD === 'sidebar') {
+
+        if(style === 'sidebar') {
+            box.className = 'layout-sidebar';
             html = `
-                <div class="left">
-                    ${photoHtml}
-                    <div class="cv-header-line">CONTACT <hr></div>
-                    <p style="font-size:12px; margin-bottom:5px;">${v('in-phone') || '0300-0000000'}</p>
-                    <p style="font-size:12px; margin-bottom:5px;">${v('in-email') || 'user@mail.com'}</p>
-                    <p style="font-size:12px; margin-bottom:5px;">${v('in-addr') || 'City, Pakistan'}</p>
-                    ${v('in-cnic') ? `<p style="font-size:11px; opacity:0.8;">CNIC: ${v('in-cnic')}</p>` : ''}
-                    
-                    <div class="cv-header-line">SKILLS <hr></div>
-                    <p style="font-size:12px; white-space:pre-line;">${v('in-skills') || 'Your Skills'}</p>
-                    
-                    <div class="cv-header-line">LANGUAGES <hr></div>
-                    <p style="font-size:12px;">${v('in-lang') || 'Urdu, English'}</p>
+                <div class="sidebar">
+                    ${photo}
+                    <div class="h-line">CONTACT <hr></div>
+                    <p class="text-p" style="color:#cbd5e1; font-size:11px;">${d('phone')}\n${d('email')}\n${d('addr')}</p>
+                    ${d('cnic') ? `<p class="text-p" style="color:#ffc107; font-size:11px;">CNIC: ${d('cnic')}</p>` : ''}
+                    <div class="h-line">SKILLS <hr></div>
+                    <p class="text-p" style="color:#cbd5e1; font-size:11px;">${d('skills')}</p>
+                    <div class="h-line">LANGUAGES <hr></div>
+                    <p class="text-p" style="color:#cbd5e1; font-size:11px;">${d('lang')}</p>
                 </div>
-                <div class="right">
-                    <h1 style="font-size:32px;">${v('in-name') || 'Your Name'}</h1>
-                    <p style="font-size:18px; color:#666; margin-bottom:15px;">${v('in-title') || 'Job Title'}</p>
-                    ${v('in-fname') ? `<p style="font-size:14px; margin-bottom:20px;"><b>Father Name:</b> ${v('in-fname')}</p>` : ''}
-                    
-                    <div class="cv-header-line" style="color:#1e293b;">OBJECTIVE <hr></div>
-                    <p style="font-size:13px; line-height:1.6;">${v('in-obj') || 'Seek opportunity to grow...'}</p>
-                    
-                    <div class="cv-header-line" style="color:#1e293b;">EDUCATION <hr></div>
-                    <p style="font-size:13px; white-space:pre-line;">${v('in-edu') || 'Education info...'}</p>
-                    
-                    <div class="cv-header-line" style="color:#1e293b;">EXPERIENCE <hr></div>
-                    <p style="font-size:13px; white-space:pre-line;">${v('in-exp') || 'Experience info...'}</p>
+                <div class="content">
+                    <h1 style="font-size:32px; color:#1e293b;">${d('name') || 'Your Name'}</h1>
+                    <p style="font-size:18px; color:#64748b;">${d('title') || 'Job Title'}</p>
+                    ${d('fname') ? `<p class="text-p"><b>Father:</b> ${d('fname')}</p>` : ''}
+                    <div class="h-line" style="color:#1e293b;">PROFILE <hr></div>
+                    <p class="text-p">${d('obj') || 'I am a motivated...'}</p>
+                    <div class="h-line" style="color:#1e293b;">EDUCATION <hr></div>
+                    <p class="text-p">${d('edu')}</p>
+                    <div class="h-line" style="color:#1e293b;">EXPERIENCE <hr></div>
+                    <p class="text-p">${d('exp')}</p>
+                    <div class="h-line" style="color:#1e293b;">PROJECTS <hr></div>
+                    <p class="text-p">${d('proj')}\n${d('cert')}</p>
                 </div>`;
         } else {
-            // Basic Single Column for others
-            html = `<div style="padding:15mm;">
-                <div style="display:flex; justify-content:space-between;">
-                    <div><h1>${v('in-name') || 'Your Name'}</h1><p>${v('in-title')}</p></div>
-                    ${photoHtml}
+            // Layout for All Other 5 Designs
+            box.className = 'layout-' + style;
+            html = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h1 style="font-size:28px;">${d('name') || 'Your Name'}</h1>
+                        <p style="font-size:16px; color:#666;">${d('title')}</p>
+                        <p class="text-p" style="margin-top:10px;">${d('phone')} | ${d('email')} | ${d('addr')}</p>
+                        <p class="text-p">${d('fname') ? 'Father: '+d('fname') : ''} ${d('cnic') ? ' | CNIC: '+d('cnic') : ''}</p>
+                    </div>
+                    ${photo}
                 </div>
-                <hr style="margin:15px 0;">
-                <p><b>Phone:</b> ${v('in-phone')} | <b>Email:</b> ${v('in-email')}</p>
-                <div class="cv-header-line" style="color:#333;">EDUCATION <hr></div>
-                <p style="white-space:pre-line;">${v('in-edu')}</p>
-                <div class="cv-header-line" style="color:#333;">EXPERIENCE <hr></div>
-                <p style="white-space:pre-line;">${v('in-exp')}</p>
-            </div>`;
+                <div class="h-line" style="color:#333;">OBJECTIVE <hr></div>
+                <p class="text-p">${d('obj')}</p>
+                <div class="h-line" style="color:#333;">EDUCATION <hr></div>
+                <p class="text-p">${d('edu')}</p>
+                <div class="h-line" style="color:#333;">EXPERIENCE <hr></div>
+                <p class="text-p">${d('exp')}</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                    <div><div class="h-line" style="color:#333;">SKILLS <hr></div><p class="text-p">${d('skills')}</p></div>
+                    <div><div class="h-line" style="color:#333;">LANGUAGES <hr></div><p class="text-p">${d('lang')}</p></div>
+                </div>
+                <div class="h-line" style="color:#333;">PROJECTS & CERTIFICATES <hr></div>
+                <p class="text-p">${d('proj')}\n${d('cert')}</p>
+            `;
         }
-        render.innerHTML = html;
+        box.innerHTML = html;
     }
 
-    function showA() {
-        document.getElementById('ad-modal').style.display = 'flex';
-        setTimeout(() => { document.getElementById('dl-ready').style.display = 'inline-block'; }, 2000);
+    function startDL() {
+        document.getElementById('ad-box').style.display = 'flex';
+        setTimeout(() => { document.getElementById('dl-final').style.display = 'inline-block'; }, 2000);
     }
 
-    function makePDF() {
-        document.getElementById('ad-modal').style.display = 'none';
-        const element = document.getElementById('cv-render');
+    function genPDF() {
+        document.getElementById('ad-box').style.display = 'none';
+        const el = document.getElementById('cv-box');
         html2pdf().set({
-            margin: 0, filename: 'My_Professional_CV.pdf',
+            margin: 0, filename: 'Professional_CV.pdf',
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        }).from(el).save();
     }
-    upd(); // Initial Run
+    update();
 </script>
 </body>
 </html>
