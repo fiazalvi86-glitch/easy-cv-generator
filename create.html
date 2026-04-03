@@ -3,260 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium CV Maker</title>
+    <title>Elite CV Maker Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+        body { background: #f4f7f6; display: flex; flex-direction: column; height: 100vh; }
 
-        /* Tabs for Mobile */
+        /* Navigation */
         .tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 1000; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 600; color: #666; font-size: 14px; }
-        .tab.active { color: #f39c12; border-bottom: 3px solid #f39c12; }
+        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: 700; color: #888; font-size: 14px; text-transform: uppercase; }
+        .tab.active { color: #f1c40f; border-bottom: 4px solid #f1c40f; }
 
         .main-container { display: flex; flex: 1; overflow: hidden; }
-        .editor { width: 35%; background: white; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
-        .preview { width: 65%; background: #525659; overflow-y: auto; padding: 30px 10px; display: flex; justify-content: center; }
+        .editor { width: 35%; background: white; padding: 25px; overflow-y: auto; border-right: 1px solid #ddd; }
+        .preview { width: 65%; background: #333; overflow-y: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
 
-        /* --- CV DESIGN (A4) --- */
+        /* --- CV BOX (A4) --- */
         #cv-box { 
             background: white; 
             width: 210mm; 
             min-height: 296mm; 
-            display: flex; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.4); 
+            display: flex !important; 
+            flex-direction: row !important; /* Always Side-by-Side */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             position: relative;
+            overflow: hidden;
         }
 
-        /* Sidebar (Dark) */
-        .sidebar { width: 35%; background: #2c3e50; color: white; padding: 10mm 7mm; }
-        /* Main Content (White) */
-        .main-content { width: 65%; background: white; padding: 10mm 10mm; color: #333; }
+        /* Design Themes */
+        .sidebar { width: 35%; padding: 10mm 6mm; color: white; transition: 0.3s; }
+        .main-content { width: 65%; padding: 10mm 10mm; background: white; }
 
-        /* Yellow Header Accent */
-        .yellow-accent { height: 40px; background: #f1c40f; position: absolute; top: 0; left: 0; width: 100%; z-index: 0; }
-        
-        .profile-img-container { position: relative; z-index: 1; text-align: center; margin-bottom: 20px; }
-        .photo { width: 140px; height: 140px; border-radius: 50%; border: 5px solid #f1c40f; object-fit: cover; background: #eee; }
+        /* Theme Colors */
+        .theme-yellow { background: #2c3e50; } .theme-yellow .accent-txt { color: #f1c40f; } .theme-yellow .accent-bg { background: #f1c40f; }
+        .theme-blue { background: #1a237e; } .theme-blue .accent-txt { color: #00bcd4; } .theme-blue .accent-bg { background: #00bcd4; }
+        .theme-green { background: #1b5e20; } .theme-green .accent-txt { color: #8bc34a; } .theme-green .accent-bg { background: #8bc34a; }
+        .theme-red { background: #b71c1c; } .theme-red .accent-txt { color: #ff5252; } .theme-red .accent-bg { background: #ff5252; }
+        .theme-purple { background: #4a148c; } .theme-purple .accent-txt { color: #ea80fc; } .theme-purple .accent-bg { background: #ea80fc; }
+        .theme-black { background: #000000; } .theme-black .accent-txt { color: #d4af37; } .theme-black .accent-bg { background: #d4af37; }
 
-        .name-title { margin-bottom: 30px; }
-        .name-title h1 { color: #f1c40f; font-size: 28px; text-transform: uppercase; margin-bottom: 5px; }
-        .name-title p { color: white; font-size: 16px; letter-spacing: 1px; }
+        /* Photo & Name */
+        .photo-area { text-align: center; margin-bottom: 25px; position: relative; z-index: 2; }
+        .photo { width: 130px; height: 130px; border-radius: 50%; border: 4px solid #f1c40f; object-fit: cover; background: #444; }
+        .name-title h1 { font-size: 24px; text-transform: uppercase; margin-top: 10px; line-height: 1.2; }
+        .name-title p { font-size: 14px; opacity: 0.8; letter-spacing: 1px; margin-top: 5px; }
 
-        .section-h { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; }
-        .icon-circle { width: 30px; height: 30px; background: #f1c40f; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #2c3e50; font-size: 14px; }
-        .section-h h3 { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .sidebar .section-h h3 { color: #f1c40f; }
-        .main-content .section-h h3 { color: #2c3e50; border-bottom: 2px solid #eee; flex: 1; padding-bottom: 5px; }
+        /* Icons & Sections */
+        .sec-h { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; }
+        .icon-box { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #2c3e50; }
+        .sec-h h3 { font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .info-item { margin-bottom: 15px; font-size: 12px; }
-        .info-item b { display: block; color: #f1c40f; margin-bottom: 2px; text-transform: uppercase; }
+        .sidebar .sec-h h3 { color: inherit; border-bottom: 1px solid rgba(255,255,255,0.2); flex: 1; padding-bottom: 3px; }
+        .main-content .sec-h h3 { color: #333; border-bottom: 2px solid #f0f0f0; flex: 1; padding-bottom: 5px; }
 
-        .timeline-item { border-left: 2px solid #f1c40f; padding-left: 15px; margin-left: 14px; position: relative; margin-bottom: 20px; }
-        .timeline-item::before { content: ''; width: 12px; height: 12px; background: #f1c40f; border-radius: 50%; position: absolute; left: -7px; top: 5px; }
-        .timeline-item h4 { font-size: 15px; color: #2c3e50; }
-        .timeline-item span { font-size: 12px; color: #7f8c8d; font-weight: 600; }
-        .timeline-item p { font-size: 12px; margin-top: 5px; line-height: 1.5; color: #444; }
+        /* Text Details */
+        .info-bit { margin-bottom: 12px; font-size: 12px; }
+        .info-bit b { display: block; font-size: 11px; margin-bottom: 2px; text-transform: uppercase; }
 
-        /* Skill Bar */
-        .skill-row { margin-bottom: 10px; }
-        .skill-name { font-size: 12px; margin-bottom: 4px; display: block; }
-        .bar-bg { height: 6px; background: #34495e; border-radius: 3px; overflow: hidden; }
-        .bar-fill { height: 100%; background: #f1c40f; width: 80%; }
+        .t-line { border-left: 2px solid #f1c40f; padding-left: 15px; margin-left: 12px; position: relative; margin-bottom: 20px; }
+        .t-line::after { content: ''; width: 10px; height: 10px; background: #f1c40f; border-radius: 50%; position: absolute; left: -6px; top: 5px; }
+        .t-line h4 { font-size: 15px; color: #333; }
+        .t-line span { font-size: 12px; color: #888; font-weight: bold; }
+        .t-line p { font-size: 12px; color: #555; margin-top: 5px; line-height: 1.5; }
 
-        /* Mobile Fixes */
+        /* Mobile Scaling - Fixed Side-by-Side */
         @media (max-width: 900px) {
             .main-container { flex-direction: column; overflow: visible; }
-            .editor, .preview { width: 100%; height: auto; display: none; }
+            .editor, .preview { width: 100%; display: none; }
             .active-p { display: block; }
-            .preview.active-p { display: flex; background: #eee; padding: 20px 0; }
-            
+            .preview.active-p { display: flex; background: #222; padding: 10px 0; overflow-x: auto; justify-content: flex-start; }
             #cv-box { 
-                flex-direction: column; /* Mobile par sidebar upar chala jayega */
-                transform: scale(calc(100vw / 210mm - 0.08)); 
-                transform-origin: top center;
-                margin-bottom: calc(296mm * (100vw / 210mm - 0.08) * -1 + 40px);
+                transform: scale(calc(100vw / 210mm)); 
+                transform-origin: top left;
+                margin-bottom: calc(296mm * (100vw / 210mm) * -1 + 20px);
             }
-            .sidebar, .main-content { width: 100%; }
         }
 
-        .input-g { margin-bottom: 10px; }
-        .input-g label { font-size: 11px; font-weight: bold; color: #2c3e50; display: block; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px; }
-        .btn-dl { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 18px; margin-top: 20px; cursor: pointer; }
+        /* Form styling */
+        .f-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: bold; color: #2c3e50; margin-bottom: 5px; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        .btn-main { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="tabs">
-    <div class="tab active" onclick="switchT('edit', this)">1. Details</div>
-    <div class="tab" onclick="switchT('view', this)">2. Preview</div>
+    <div class="tab active" onclick="tab('edit', this)">1. Customize Details</div>
+    <div class="tab" onclick="tab('view', this)">2. Live Preview</div>
 </div>
 
 <div class="main-container">
-    <div class="editor active-p" id="edit-sec">
-        <h3>CV Editor</h3>
-        <div class="input-g">
-            <label>Photo</label>
-            <input type="file" accept="image/*" onchange="handlePhoto(event)">
-        </div>
-        <div class="input-g">
-            <label>Full Name</label>
-            <input type="text" id="in-name" placeholder="Nina Lane" oninput="upd()">
-        </div>
-        <div class="input-g">
-            <label>Job Title</label>
-            <input type="text" id="in-title" placeholder="Graphic Designer" oninput="upd()">
-        </div>
-        <div class="input-g">
-            <label>Phone / Email / Address</label>
-            <input type="text" id="in-phone" placeholder="Phone" oninput="upd()">
-            <input type="text" id="in-email" placeholder="Email" oninput="upd()">
-            <input type="text" id="in-addr" placeholder="Address" oninput="upd()">
-        </div>
-        <div class="input-g">
-            <label>Profile Objective</label>
-            <textarea id="in-obj" rows="3" oninput="upd()"></textarea>
-        </div>
-        <div class="input-g">
-            <label>Experience (Job - Company - Date)</label>
-            <textarea id="in-exp" rows="4" oninput="upd()"></textarea>
-        </div>
-        <div class="input-g">
-            <label>Education</label>
-            <textarea id="in-edu" rows="3" oninput="upd()"></textarea>
-        </div>
-        <div class="input-g">
-            <label>Skills (comma separated)</label>
-            <input type="text" id="in-skills" placeholder="Photoshop, Illustrator" oninput="upd()">
+    <div class="editor active-p" id="e-sec">
+        <div class="f-group">
+            <label>Select High-Quality Design</label>
+            <select id="i-theme" onchange="u()">
+                <option value="theme-yellow">1. Modern Yellow (Dark Sidebar)</option>
+                <option value="theme-blue">2. Corporate Blue (Cyan Accent)</option>
+                <option value="theme-green">3. Eco Professional (Green)</option>
+                <option value="theme-red">4. Executive Crimson (Red)</option>
+                <option value="theme-purple">5. Creative Purple (Lilac)</option>
+                <option value="theme-black">6. Royal Gold (Black & Gold)</option>
+            </select>
         </div>
 
-        <button class="btn-dl" onclick="download()">Download PDF</button>
-        <div style="height:60px;"></div>
+        <div class="f-group"><label>Profile Image (Auto-Crop Circle)</label><input type="file" accept="image/*" onchange="hP(event)"></div>
+        <div class="f-group"><label>Full Name</label><input type="text" id="i-name" placeholder="Fiaz" oninput="u()"></div>
+        <div class="f-group"><label>Father Name</label><input type="text" id="i-fname" placeholder="Father's Name" oninput="u()"></div>
+        <div class="f-group"><label>Professional Title</label><input type="text" id="i-title" placeholder="Full Stack Developer" oninput="u()"></div>
+        
+        <div class="f-group"><label>Contact Info</label>
+            <input type="text" id="i-ph" placeholder="Phone Number" oninput="u()">
+            <input type="text" id="i-em" placeholder="Email Address" oninput="u()">
+            <input type="text" id="i-ad" placeholder="City, Country" oninput="u()">
+            <input type="text" id="i-cn" placeholder="CNIC Number" oninput="u()">
+        </div>
+
+        <div class="f-group"><label>Profile Objective</label><textarea id="i-obj" rows="3" oninput="u()"></textarea></div>
+        <div class="f-group"><label>Experience (Enter one per line)</label><textarea id="i-exp" rows="4" oninput="u()"></textarea></div>
+        <div class="f-group"><label>Education (Enter one per line)</label><textarea id="i-edu" rows="3" oninput="u()"></textarea></div>
+        <div class="f-group"><label>Skills (Comma separated)</label><input type="text" id="i-sk" oninput="u()"></div>
+
+        <button class="btn-main" onclick="dl()">Download High Quality PDF</button>
+        <div style="height:50px;"></div>
     </div>
 
-    <div class="preview" id="view-sec">
-        <div id="cv-box">
-            <div class="yellow-accent"></div>
-            
-            <div class="sidebar">
-                <div class="profile-img-container">
-                    <div id="photo-box">
-                        <img src="" class="photo" id="cv-photo" style="display:none;">
-                        <div id="photo-placeholder" style="width:140px; height:140px; border-radius:50%; background:#34495e; border:5px solid #f1c40f; margin:0 auto; display:flex; align-items:center; justify-content:center; color:white;">Photo</div>
-                    </div>
+    <div class="preview" id="v-sec">
+        <div id="cv-box" class="theme-yellow">
+            <div class="sidebar" id="sb-col">
+                <div class="photo-area">
+                    <img src="" class="photo" id="o-img" style="display:none;">
+                    <div id="o-placeholder" style="width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,0.1);margin:0 auto;display:flex;align-items:center;justify-content:center;border:4px solid #f1c40f;"><i class="fas fa-camera fa-2x"></i></div>
                 </div>
-
                 <div class="name-title">
-                    <h1 id="out-name">NINA LANE</h1>
-                    <p id="out-title">GRAPHIC DESIGNER</p>
+                    <h1 id="o-name">YOUR NAME</h1>
+                    <p id="o-title">Professional Title</p>
                 </div>
 
-                <div class="section-h">
-                    <div class="icon-circle"><i class="fas fa-phone"></i></div>
-                    <h3>Contact</h3>
-                </div>
-                <div class="info-item"><b>Phone</b><span id="out-phone">+1 234 567 890</span></div>
-                <div class="info-item"><b>Email</b><span id="out-email">nina.lane@mail.com</span></div>
-                <div class="info-item"><b>Address</b><span id="out-addr">New York, NY</span></div>
+                <div class="sec-h"><div class="icon-box accent-bg"><i class="fas fa-address-book"></i></div><h3>Contact</h3></div>
+                <div class="info-bit"><b class="accent-txt">Phone</b><span id="o-ph">---</span></div>
+                <div class="info-bit"><b class="accent-txt">Email</b><span id="o-em">---</span></div>
+                <div class="info-bit"><b class="accent-txt">Address</b><span id="o-ad">---</span></div>
+                <div class="info-bit"><b class="accent-txt">CNIC</b><span id="o-cn">---</span></div>
 
-                <div class="section-h">
-                    <div class="icon-circle"><i class="fas fa-lightbulb"></i></div>
-                    <h3>Skills</h3>
-                </div>
-                <div id="skills-list"></div>
+                <div class="sec-h"><div class="icon-box accent-bg"><i class="fas fa-brain"></i></div><h3>Skills</h3></div>
+                <div id="o-sk" style="font-size:12px; line-height:1.8;"></div>
             </div>
 
             <div class="main-content">
-                <div class="section-h">
-                    <div class="icon-circle"><i class="fas fa-user"></i></div>
-                    <h3>Profile</h3>
-                </div>
-                <p class="txt" id="out-obj" style="margin-bottom:25px; color:#555;">Creative graphic designer with 5+ years experience...</p>
+                <div class="sec-h"><div class="icon-box accent-bg" style="color:white;"><i class="fas fa-user-tie"></i></div><h3>Profile</h3></div>
+                <p id="o-obj" style="font-size:12px; line-height:1.6; color:#555; margin-bottom:20px; text-align:justify;">Enter your career objective here...</p>
 
-                <div class="section-h">
-                    <div class="icon-circle"><i class="fas fa-briefcase"></i></div>
-                    <h3>Experience</h3>
-                </div>
-                <div id="exp-list"></div>
+                <div class="sec-h"><div class="icon-box accent-bg" style="color:white;"><i class="fas fa-history"></i></div><h3>Work Experience</h3></div>
+                <div id="o-exp"></div>
 
-                <div class="section-h">
-                    <div class="icon-circle"><i class="fas fa-graduation-cap"></i></div>
-                    <h3>Education</h3>
+                <div class="sec-h"><div class="icon-box accent-bg" style="color:white;"><i class="fas fa-graduation-cap"></i></div><h3>Education</h3></div>
+                <div id="o-edu"></div>
+
+                <div style="margin-top:25px; border-top:1px solid #eee; padding-top:10px;">
+                    <p style="font-size:12px; color:#333;"><b>Father Name:</b> <span id="o-fname">---</span></p>
                 </div>
-                <div id="edu-list"></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    let photoData = "";
-
-    function switchT(t, b) {
-        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    let pImg = "";
+    function tab(t,b){
+        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
         b.classList.add('active');
-        document.getElementById('edit-sec').classList.toggle('active-p', t === 'edit');
-        document.getElementById('view-sec').classList.toggle('active-p', t === 'view');
+        document.getElementById('e-sec').classList.toggle('active-p', t==='edit');
+        document.getElementById('v-sec').classList.toggle('active-p', t==='view');
     }
-
-    function handlePhoto(e) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            photoData = reader.result;
-            const img = document.getElementById('cv-photo');
-            img.src = photoData;
-            img.style.display = 'block';
-            document.getElementById('photo-placeholder').style.display = 'none';
-        };
-        reader.readAsDataURL(e.target.files[0]);
+    function hP(e){
+        const r = new FileReader();
+        r.onload = () => { pImg = r.result; const img = document.getElementById('o-img'); img.src = pImg; img.style.display='block'; document.getElementById('o-placeholder').style.display='none'; };
+        r.readAsDataURL(e.target.files[0]);
     }
-
-    function upd() {
+    function u(){
         const val = (id) => document.getElementById(id).value;
-        document.getElementById('out-name').innerText = val('in-name') || "YOUR NAME";
-        document.getElementById('out-title').innerText = val('in-title') || "PROFESSIONAL TITLE";
-        document.getElementById('out-phone').innerText = val('in-phone') || "03xx-xxxxxxx";
-        document.getElementById('out-email').innerText = val('in-email') || "user@mail.com";
-        document.getElementById('out-addr').innerText = val('in-addr') || "City, Pakistan";
-        document.getElementById('out-obj').innerText = val('in-obj') || "Enter your profile objective here...";
+        const theme = val('i-theme');
+        const box = document.getElementById('cv-box');
+        box.className = theme;
 
-        // Skills List
-        const skills = val('in-skills').split(',');
-        let sHtml = '';
-        skills.forEach(s => {
-            if(s.trim()) sHtml += `<div class="skill-row"><span class="skill-name">${s.trim()}</span><div class="bar-bg"><div class="bar-fill"></div></div></div>`;
-        });
-        document.getElementById('skills-list').innerHTML = sHtml;
+        document.getElementById('o-name').innerText = val('i-name').toUpperCase() || "YOUR NAME";
+        document.getElementById('o-fname').innerText = val('i-fname') || "---";
+        document.getElementById('o-title').innerText = val('i-title') || "Professional Title";
+        document.getElementById('o-ph').innerText = val('i-ph') || "---";
+        document.getElementById('o-em').innerText = val('i-em') || "---";
+        document.getElementById('o-ad').innerText = val('i-ad') || "---";
+        document.getElementById('o-cn').innerText = val('i-cn') || "---";
+        document.getElementById('o-obj').innerText = val('i-obj') || "Career objective...";
 
-        // Experience List (Split by new line)
-        const exps = val('in-exp').split('\n');
-        let eHtml = '';
-        exps.forEach(e => {
-            if(e.trim()) eHtml += `<div class="timeline-item"><h4>Job Role</h4><span>${e.trim()}</span><p>Description of duties and achievements.</p></div>`;
-        });
-        document.getElementById('exp-list').innerHTML = eHtml;
+        // Lists
+        const makeList = (inputId, targetId) => {
+            const lines = val(inputId).split('\n');
+            let h = '';
+            lines.forEach(l => { if(l.trim()) h += `<div class="t-line"><h4>${l.trim()}</h4><p>Managed key responsibilities and delivered results.</p></div>`; });
+            document.getElementById(targetId).innerHTML = h;
+        };
+        makeList('i-exp', 'o-exp');
+        makeList('i-edu', 'o-edu');
 
-        // Education List
-        const edus = val('in-edu').split('\n');
-        let edHtml = '';
-        edus.forEach(ed => {
-            if(ed.trim()) edHtml += `<div class="timeline-item"><h4>Education Degree</h4><span>${ed.trim()}</span></div>`;
-        });
-        document.getElementById('edu-list').innerHTML = edHtml;
+        const sks = val('i-sk').split(',');
+        document.getElementById('o-sk').innerHTML = sks.map(s => s.trim() ? `• ${s.trim()}<br>` : '').join('');
     }
-
-    function download() {
-        const element = document.getElementById('cv-box');
-        html2pdf().set({
-            margin: 0, filename: 'Modern_Premium_CV.pdf',
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+    function dl(){
+        const opt = { margin: 0, filename: 'Premium_CV.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 3, useCORS: true, letterRendering: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+        html2pdf().set(opt).from(document.getElementById('cv-box')).save();
     }
-    upd();
+    u();
 </script>
 </body>
 </html>
