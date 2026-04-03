@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Master Pro - Responsive Edition</title>
+    <title>CV Master Pro - Free CV Builder</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
@@ -11,118 +11,141 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        :root { --main: #ffffff; --dark: #8b0000; }
+        :root { --main: #ffffff; --dark: #8b0000; --accent: #e74c3c; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: #121212; display: flex; flex-direction: column; align-items: center; padding: 10px; }
+        body { background: #121212; overflow-x: hidden; }
 
-        /* Admin Panel - Fully Responsive */
-        .admin-panel { 
-            width: 100%; 
-            max-width: 900px; 
-            background: #fff; 
-            padding: 20px; 
-            border-radius: 15px; 
-            margin-bottom: 25px;
+        /* --- NEW INTRO SCREEN --- */
+        #intro-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #8b0000 0%, #121212 100%);
+            z-index: 10000;
             display: flex;
-            flex-direction: column; /* Mobile first: stack items */
-            gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
-
-        /* Desktop view for Admin Panel */
-        @media (min-width: 768px) {
-            .admin-panel { 
-                display: grid; 
-                grid-template-columns: repeat(3, 1fr); 
-            }
-            .full-w { grid-column: 1 / -1; }
+        .intro-content h1 { font-size: 3rem; margin-bottom: 10px; letter-spacing: 2px; }
+        .intro-content p { font-size: 1.2rem; margin-bottom: 30px; opacity: 0.8; }
+        .start-btn { 
+            padding: 15px 40px; 
+            font-size: 1.2rem; 
+            background: white; 
+            color: #8b0000; 
+            border: none; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.3s;
         }
+        .start-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(0,0,0,0.4); }
 
+        /* --- APP CONTENT (Form & CV) --- */
+        #app-content { display: none; padding: 15px; align-items: center; flex-direction: column; width: 100%; }
+
+        /* Aapka Original Form & CV Style (No Changes) */
+        .admin-panel { width: 100%; max-width: 900px; background: #fff; padding: 20px; border-radius: 15px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        @media (min-width: 768px) { .admin-panel { display: grid; grid-template-columns: repeat(3, 1fr); } .full-w { grid-column: 1 / -1; } }
         .brand-h { grid-column: 1 / -1; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; color: var(--dark); font-weight: bold; font-size: 22px; }
-
-        /* Input Styles */
         .field { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; }
         input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; }
-
-        /* Themes */
         .t-red { --dark: #8b0000; --main: #fff; }
         .t-blue { --dark: #1a237e; --main: #00d2ff; }
         .t-gold { --dark: #000; --main: #d4af37; }
-
-        /* CV Box Logic */
         .cv-viewport { width: 100%; display: flex; justify-content: center; overflow: hidden; padding: 10px 0; }
-        #cv-render { 
-            background: white; width: 210mm; min-height: 296mm; display: flex !important; 
-            box-shadow: 0 0 40px rgba(0,0,0,0.8); position: relative; flex-shrink: 0;
-        }
-
-        /* Mobile Scale CV */
-        @media (max-width: 900px) {
-            #cv-render { 
-                transform: scale(calc(100vw / 210mm - 0.08)); 
-                transform-origin: top center;
-                margin-bottom: -180mm; /* Fix blank space after scale */
-            }
-        }
-
-        /* CV Sidebar & Body */
+        #cv-render { background: white; width: 210mm; min-height: 296mm; display: flex !important; box-shadow: 0 0 40px rgba(0,0,0,0.8); position: relative; flex-shrink: 0; }
+        @media (max-width: 900px) { #cv-render { transform: scale(calc(100vw / 210mm - 0.08)); transform-origin: top center; margin-bottom: -180mm; } }
         .side { width: 35%; background: var(--dark); color: #fff; padding: 10mm 6mm; }
         .main { width: 65%; background: #fff; padding: 10mm 8mm; color: #333; }
-
         .pic-c { width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--main); margin: 0 auto 20px; overflow: hidden; background: #222; display: flex; align-items: center; justify-content: center; }
         .pic-c img { width: 100%; height: 100%; object-fit: cover; }
-
         .n-info { text-align: center; margin-bottom: 30px; }
         .n-info h1 { font-size: 22px; color: var(--main); text-transform: uppercase; line-height: 1.1; }
         .f-txt { font-size: 12px; font-style: italic; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); margin-top: 5px; padding-top: 5px; }
-
         .sh { font-size: 13px; text-transform: uppercase; border-bottom: 1px solid var(--main); margin: 20px 0 10px; padding-bottom: 3px; color: var(--main); font-weight: bold; }
         .ci { font-size: 11px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-
         .list-box { margin-bottom: 15px; border-left: 2px solid var(--dark); padding-left: 12px; position: relative; }
         .list-box::before { content: ''; width: 8px; height: 8px; background: var(--dark); border-radius: 50%; position: absolute; left: -5px; top: 5px; }
         .list-box b { font-size: 13px; display: block; }
         .list-box span { font-size: 11px; color: #666; }
-
-        /* Buttons */
         .btn-box { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px; }
         .btn { padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 14px; }
         .btn-unlock { background: #e74c3c; color: white; }
         .btn-dl { background: #27ae60; color: white; display: none; }
-
-        /* Modal */
         #m-crop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; flex-direction: column; }
         .m-content { background: white; padding: 15px; border-radius: 10px; width: 90%; max-width: 350px; }
     </style>
 </head>
 <body class="t-red">
 
-    <div class="admin-panel">
-        <div class="brand-h">CV MASTER PRO <i class="fas fa-mobile-alt"></i></div>
-        
-        <div class="field">
-            <label>Design Style</label>
-            <select onchange="document.body.className = this.value">
-                <option value="t-red">Premium Red</option>
-                <option value="t-blue">Executive Blue</option>
-                <option value="t-gold">Royal Gold</option>
-            </select>
+    <div id="intro-screen">
+        <div class="intro-content">
+            <i class="fas fa-file-invoice fa-5x" style="margin-bottom: 20px; color: #f1c40f;"></i>
+            <h1>CV Master Pro</h1>
+            <p>Create Professional, Job-Winning CVs in Seconds – For Free!</p>
+            <button class="start-btn" onclick="openApp()">Start Building Now <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div id="app-content">
+        <div class="admin-panel">
+            <div class="brand-h">CV MASTER PRO EDITOR <i class="fas fa-edit"></i></div>
+            
+            <div class="field">
+                <label>Design Style</label>
+                <select onchange="document.body.className = this.value">
+                    <option value="t-red">Premium Red</option>
+                    <option value="t-blue">Executive Blue</option>
+                    <option value="t-gold">Royal Gold</option>
+                </select>
+            </div>
+
+            <div class="field"><label>Photo</label><input type="file" id="u-img" accept="image/*"></div>
+            <div class="field"><label>Full Name</label><input type="text" id="in-n" placeholder="Fiaz Alvi" oninput="run()"></div>
+            <div class="field"><label>Father Name</label><input type="text" id="in-fn" placeholder="Father's Name" oninput="run()"></div>
+            <div class="field"><label>Job Title</label><input type="text" id="in-t" placeholder="Senior Developer" oninput="run()"></div>
+            <div class="field"><label>Phone</label><input type="text" id="in-p" placeholder="+92 3XX XXXXXXX" oninput="run()"></div>
+            <div class="field"><label>Email</label><input type="text" id="in-e" placeholder="fiaz@example.com" oninput="run()"></div>
+
+            <div class="field full-w"><label>Education (Year | Degree | Institute)</label><textarea id="in-edu" rows="2" placeholder="2022 | MCS | Karachi University" oninput="run()"></textarea></div>
+            <div class="field full-w"><label>Courses (Course | Platform)</label><textarea id="in-crs" rows="2" placeholder="Python | Coursera" oninput="run()"></textarea></div>
+
+            <div class="btn-box">
+                <button class="btn btn-unlock" id="b-unlock" onclick="startAd()">Watch Ad to Download</button>
+                <button class="btn btn-dl" id="b-dl" onclick="savePdf()">Download Premium CV</button>
+            </div>
         </div>
 
-        <div class="field"><label>Photo</label><input type="file" id="u-img" accept="image/*"></div>
-        <div class="field"><label>Full Name</label><input type="text" id="in-n" placeholder="Fiaz Alvi" oninput="run()"></div>
-        <div class="field"><label>Father Name</label><input type="text" id="in-fn" placeholder="Father's Name" oninput="run()"></div>
-        <div class="field"><label>Job Title</label><input type="text" id="in-t" placeholder="Senior Developer" oninput="run()"></div>
-        <div class="field"><label>Phone</label><input type="text" id="in-p" placeholder="+92 3XX XXXXXXX" oninput="run()"></div>
-        <div class="field"><label>Email</label><input type="text" id="in-e" placeholder="fiaz@example.com" oninput="run()"></div>
-
-        <div class="field full-w"><label>Education (Year | Degree | Institute)</label><textarea id="in-edu" rows="2" placeholder="2022 | MCS | Karachi University" oninput="run()"></textarea></div>
-        <div class="field full-w"><label>Courses (Course | Platform)</label><textarea id="in-crs" rows="2" placeholder="Python | Coursera" oninput="run()"></textarea></div>
-
-        <div class="btn-box">
-            <button class="btn btn-unlock" id="b-unlock" onclick="startAd()">Watch Ad to Download</button>
-            <button class="btn btn-dl" id="b-dl" onclick="savePdf()">Download Premium CV</button>
+        <div class="cv-viewport">
+            <div id="cv-render">
+                <div class="side">
+                    <div class="pic-c">
+                        <img src="" id="out-img" style="display:none;">
+                        <i class="fas fa-camera fa-3x" id="def-ico" style="opacity:0.2"></i>
+                    </div>
+                    <div class="n-info">
+                        <h1 id="out-n">YOUR NAME</h1>
+                        <div class="f-txt" id="out-fn">S/O: Father's Name</div>
+                        <p style="color:var(--main); margin-top:5px;" id="out-t">Job Title</p>
+                    </div>
+                    <div class="sh">Contact</div>
+                    <div class="ci"><i class="fas fa-phone"></i> <span id="out-p">+92...</span></div>
+                    <div class="ci"><i class="fas fa-envelope"></i> <span id="out-e">email@domain.com</span></div>
+                </div>
+                <div class="main">
+                    <div class="sh" style="border-bottom:2px solid #eee; color:var(--dark)">Education</div>
+                    <div id="out-edu"><div class="list-box"><b>Master's Degree</b><span>University Name | 2022</span></div></div>
+                    <div class="sh" style="border-bottom:2px solid #eee; color:var(--dark)">Courses</div>
+                    <div id="out-crs"><div class="list-box"><b>Certification Name</b><span>Platform | Year</span></div></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -133,36 +156,18 @@
         </div>
     </div>
 
-    <div class="cv-viewport">
-        <div id="cv-render">
-            <div class="side">
-                <div class="pic-c">
-                    <img src="" id="out-img" style="display:none;">
-                    <i class="fas fa-camera fa-3star" id="def-ico" style="opacity:0.2"></i>
-                </div>
-                <div class="n-info">
-                    <h1 id="out-n">YOUR NAME</h1>
-                    <div class="f-txt" id="out-fn">S/O: Father's Name</div>
-                    <p style="color:var(--main); margin-top:5px;" id="out-t">Job Title</p>
-                </div>
-                <div class="sh">Contact</div>
-                <div class="ci"><i class="fas fa-phone"></i> <span id="out-p">+92...</span></div>
-                <div class="ci"><i class="fas fa-envelope"></i> <span id="out-e">email@domain.com</span></div>
-            </div>
-            <div class="main">
-                <div class="sh" style="border-bottom:2px solid #eee; color:var(--dark)">Education</div>
-                <div id="out-edu">
-                    <div class="list-box"><b>Master's Degree</b><span>University Name | 2022</span></div>
-                </div>
-                <div class="sh" style="border-bottom:2px solid #eee; color:var(--dark)">Courses</div>
-                <div id="out-crs">
-                    <div class="list-box"><b>Certification Name</b><span>Platform | Year</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
+        // Intro Functionality
+        function openApp() {
+            const intro = document.getElementById('intro-screen');
+            const app = document.getElementById('app-content');
+            
+            intro.style.transform = 'translateY(-100%)';
+            app.style.display = 'flex';
+            window.scrollTo(0, 0);
+        }
+
+        // --- Original Script (No Changes) ---
         let cp;
         function run() {
             const v = (id) => document.getElementById(id).value;
@@ -171,7 +176,6 @@
             document.getElementById('out-t').innerText = v('in-t') || "Job Title";
             document.getElementById('out-p').innerText = v('in-p') || "+92...";
             document.getElementById('out-e').innerText = v('in-e') || "email@domain.com";
-
             const fill = (i, o) => {
                 const lines = v(i).split('\n');
                 let h = '';
@@ -181,8 +185,7 @@
                 }});
                 if(h) document.getElementById(o).innerHTML = h;
             };
-            fill('in-edu', 'out-edu');
-            fill('in-crs', 'out-crs');
+            fill('in-edu', 'out-edu'); fill('in-crs', 'out-crs');
         }
 
         document.getElementById('u-img').onchange = function(e) {
@@ -214,7 +217,7 @@
             setTimeout(() => {
                 b.style.display = 'none';
                 document.getElementById('b-dl').style.display = 'block';
-                alert("CV Unlocked!");
+                alert("CV Editor Unlocked!");
             }, 4000);
         }
 
@@ -222,7 +225,6 @@
             const el = document.getElementById('cv-render');
             const originalTransform = el.style.transform;
             el.style.transform = 'none';
-            
             html2pdf().set({
                 margin: 0, filename: 'CV_Master_Pro.pdf',
                 html2canvas: { scale: 3, useCORS: true },
