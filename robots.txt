@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap ka link jo Google ko rasta dikhayega
+Sitemap: https://fiazalvi86-glitch.github.io/easy-cv-generator/sitemap.xml
