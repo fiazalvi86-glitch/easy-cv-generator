@@ -3,130 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro CV Maker - 6 Premium Designs</title>
+    <title>Pro CV Maker - Mobile Optimized</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; color: #333; }
+        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; overflow-x: hidden; }
 
-        /* Layout */
+        /* App Container */
         .app-container { display: flex; height: 100vh; overflow: hidden; }
         .editor-side { width: 35%; background: white; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
         .preview-side { width: 65%; background: #525659; display: flex; justify-content: center; overflow-y: auto; padding: 40px 20px; }
 
-        /* Mobile View (Tabs) */
+        /* Mobile Optimization (Tabs & Scaling) */
         @media (max-width: 900px) {
-            .app-container { flex-direction: column; height: auto; }
-            .editor-side, .preview-side { width: 100%; height: auto; padding: 10px; }
-            .preview-side { display: none; background: #eee; }
-            .mobile-tabs { display: flex; position: sticky; top: 0; z-index: 1000; background: white; border-bottom: 2px solid #ddd; }
-            .tab-btn { flex: 1; padding: 15px; border: none; background: none; font-weight: 600; cursor: pointer; color: #666; }
-            .tab-btn.active { color: #2563eb; border-bottom: 3px solid #2563eb; }
-            #cv-render { transform: scale(0.38); transform-origin: top center; margin-bottom: -185mm; }
+            .app-container { flex-direction: column; height: 100vh; }
+            .editor-side { width: 100%; height: calc(100vh - 60px); display: block; }
+            .preview-side { width: 100%; height: calc(100vh - 60px); display: none; padding: 10px; align-items: flex-start; justify-content: center; overflow: auto; }
+            
+            /* CV Scaling for Mobile Screen */
+            #cv-render { 
+                transform: scale(0.42); 
+                transform-origin: top center; 
+                margin: 0 auto;
+                box-shadow: none;
+            }
+            
+            .mobile-tabs { display: flex; height: 60px; background: white; border-top: 2px solid #ddd; position: fixed; bottom: 0; width: 100%; z-index: 1000; }
+            .tab-btn { flex: 1; border: none; background: none; font-weight: 600; font-size: 14px; color: #666; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .tab-btn i { font-size: 18px; margin-bottom: 2px; }
+            .tab-btn.active { color: #2563eb; }
         }
+
         @media (min-width: 901px) { .mobile-tabs { display: none; } }
 
-        /* Form Styling */
-        .section-title { background: #eef2ff; padding: 8px 12px; border-radius: 6px; margin: 20px 0 10px; font-weight: 600; color: #1e40af; border-left: 4px solid #2563eb; font-size: 13px; text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
-        .design-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 20px; }
-        .design-btn { padding: 8px; font-size: 11px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: white; }
-        .design-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
-
-        /* --- CV RENDERING (A4) --- */
-        #cv-render { background: white; width: 210mm; min-height: 296mm; box-shadow: 0 0 20px rgba(0,0,0,0.3); display: block; overflow: hidden; position: relative; }
+        /* Editor Styles */
+        .section-title { background: #eef2ff; padding: 10px; border-radius: 6px; margin: 20px 0 10px; font-weight: 600; color: #1e40af; border-left: 4px solid #2563eb; font-size: 13px; }
+        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
         
-        /* Shared Styles for CV Content */
-        .cv-photo { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; border: 3px solid #ffc107; margin-bottom: 15px; }
-        .cv-header-line { display: flex; align-items: center; gap: 10px; margin: 15px 0 10px; color: #ffc107; font-weight: 600; font-size: 16px; }
-        .cv-header-line hr { flex: 1; border: 0; border-top: 1px solid #ddd; }
-        .cv-text { font-size: 13px; line-height: 1.5; color: #444; margin-bottom: 5px; white-space: pre-line; }
-        .label { font-weight: 600; color: #333; }
+        /* CV Render (A4) */
+        #cv-render { 
+            background: white; 
+            width: 210mm; 
+            min-height: 296mm; 
+            display: block; 
+            position: relative; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); 
+        }
 
-        /* DESIGN 1: MODERN SIDEBAR (Default) */
-        .d-sidebar { display: grid; grid-template-columns: 35% 65%; height: 296mm; }
+        /* Image Crop/Fit Style */
+        .cv-photo { 
+            width: 130px; height: 130px; 
+            border-radius: 10px; 
+            object-fit: cover; /* This fixes the stretching/distortion */
+            object-position: center; 
+            border: 3px solid #ffc107; 
+            background: #eee;
+            display: block;
+            margin: 0 auto 20px;
+        }
+
+        /* Design Specifics */
+        .d-sidebar { display: grid; grid-template-columns: 35% 65%; min-height: 296mm; }
         .d-sidebar .left { background: #1e293b; color: white; padding: 20mm 10mm; }
-        .d-sidebar .right { padding: 20mm 12mm; }
-        .d-sidebar .cv-header-line { color: #ffc107; }
-        .d-sidebar .cv-text { color: #cbd5e1; }
-        .d-sidebar .right .cv-text { color: #444; }
+        .d-sidebar .right { padding: 20mm 12mm; background: white; }
+        .cv-header-line { display: flex; align-items: center; gap: 10px; margin: 15px 0 10px; color: #ffc107; font-weight: 600; }
+        .cv-header-line hr { flex: 1; border: 0; border-top: 1px solid #ddd; opacity: 0.3; }
 
-        /* DESIGN 2: CLASSIC NAVY */
-        .d-classic { padding: 15mm; border-top: 15px solid #1e40af; }
-        .d-classic .cv-header-line { color: #1e40af; }
-
-        /* DESIGN 3: MINIMALIST */
-        .d-minimal { padding: 15mm; text-align: center; }
-        .d-minimal .cv-header-line { justify-content: center; color: #333; }
-
-        /* DESIGN 4: EXECUTIVE (Gold/Black) */
-        .d-exec { padding: 15mm; border-left: 15mm solid #000; }
-        .d-exec .cv-header-line { color: #b8860b; }
-
-        /* DESIGN 5: CLEAN GREY */
-        .d-clean { padding: 15mm; background: #f9fafb; }
-        .d-clean .cv-header-line { color: #4b5563; }
-
-        /* DESIGN 6: TECH BOLD */
-        .d-tech { padding: 15mm; border: 2px solid #2563eb; }
-        .d-tech .cv-header-line { background: #2563eb; color: white; padding: 5px 10px; border-radius: 4px; }
-
-        .download-btn { width: 100%; background: #059669; color: white; padding: 16px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        .download-btn { width: 100%; background: #059669; color: white; padding: 18px; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        
+        /* Ad Modal */
         #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div class="mobile-tabs">
-    <button class="tab-btn active" onclick="switchT('edit')">1. Info</button>
-    <button class="tab-btn" onclick="switchT('view')">2. Preview</button>
-</div>
-
 <div class="app-container">
     <div class="editor-side" id="edit-p">
-        <h2 style="margin-bottom:15px; font-size:20px;">Premium CV Builder</h2>
+        <h2 style="margin-bottom:15px;">CV Generator</h2>
         
-        <div class="section-title">Select Design</div>
-        <div class="design-grid">
-            <button class="design-btn active" onclick="setD('sidebar', this)">Sidebar</button>
-            <button class="design-btn" onclick="setD('classic', this)">Classic</button>
-            <button class="design-btn" onclick="setD('minimal', this)">Minimal</button>
-            <button class="design-btn" onclick="setD('exec', this)">Executive</button>
-            <button class="design-btn" onclick="setD('clean', this)">Clean</button>
-            <button class="design-btn" onclick="setD('tech', this)">Tech</button>
-        </div>
-
-        <div class="section-title">1. Personal Info</div>
+        <div class="section-title">Design & Photo</div>
+        <select id="sel-design" onchange="setD(this.value)">
+            <option value="sidebar">Modern Sidebar</option>
+            <option value="classic">Classic Navy</option>
+            <option value="minimal">Minimalist</option>
+            <option value="exec">Executive Gold</option>
+        </select>
+        <p style="font-size:12px; color:#666; margin-bottom:5px;">Upload Profile Photo:</p>
         <input type="file" accept="image/*" onchange="loadI(event)">
+
+        <div class="section-title">Personal Details</div>
         <input type="text" id="in-name" placeholder="Full Name" oninput="upd()">
         <input type="text" id="in-fname" placeholder="Father Name" oninput="upd()">
-        <input type="text" id="in-title" placeholder="Professional Title" oninput="upd()">
-        <input type="text" id="in-phone" placeholder="Phone Number" oninput="upd()">
+        <input type="text" id="in-phone" placeholder="Phone (e.g. 0300-1234567)" oninput="upd()">
         <input type="text" id="in-email" placeholder="Email Address" oninput="upd()">
-        <input type="text" id="in-address" placeholder="Address (City)" oninput="upd()">
+        <input type="text" id="in-addr" placeholder="City Address" oninput="upd()">
         <input type="text" id="in-cnic" placeholder="CNIC (Optional)" oninput="upd()">
 
-        <div class="section-title">2. Profile Objective</div>
-        <textarea id="in-obj" placeholder="Short intro about yourself..." rows="3" oninput="upd()"></textarea>
-
-        <div class="section-title">3. Education</div>
-        <textarea id="in-edu" placeholder="Matric/Inter - School - Year - Marks" rows="3" oninput="upd()"></textarea>
-
-        <div class="section-title">4. Experience</div>
+        <div class="section-title">Education & Experience</div>
+        <textarea id="in-edu" placeholder="Matric/Inter - School - Year" rows="3" oninput="upd()"></textarea>
         <textarea id="in-exp" placeholder="Job Title - Company - Duration" rows="3" oninput="upd()"></textarea>
 
-        <div class="section-title">5. Projects & Certificates</div>
-        <input type="text" id="in-proj" placeholder="Project Name - Description" oninput="upd()">
-        <input type="text" id="in-cert" placeholder="Certificate Name - Institute" oninput="upd()">
-
-        <div class="section-title">6. Skills & Languages</div>
-        <input type="text" id="in-skills" placeholder="Skills (MS Word, Excel, etc.)" oninput="upd()">
+        <div class="section-title">Skills & Languages</div>
+        <input type="text" id="in-skills" placeholder="Skills (MS Word, Excel)" oninput="upd()">
         <input type="text" id="in-lang" placeholder="Languages (Urdu, English)" oninput="upd()">
 
-        <button class="download-btn" onclick="showA()">Download Pro PDF</button>
-    </div>
+        <button class="download-btn" onclick="showA()">Download CV (PDF)</button>
+        <div style="height:80px"></div> </div>
 
     <div class="preview-side" id="view-p">
         <div id="cv-render" class="d-sidebar">
@@ -134,32 +118,31 @@
     </div>
 </div>
 
+<div class="mobile-tabs">
+    <button class="tab-btn active" id="btn-edit" onclick="switchT('edit')"><i class="fas fa-edit"></i>Info</button>
+    <button class="tab-btn" id="btn-view" onclick="switchT('view')"><i class="fas fa-eye"></i>Preview</button>
+</div>
+
 <div id="ad-modal">
-    <div style="background:white; padding:30px; border-radius:15px; color:black; width:100%; max-width:350px;">
-        <h3>Processing CV...</h3>
-        <div style="height:250px; background:#f3f4f6; margin:20px 0; display:flex; align-items:center; justify-content:center; border:1px dashed #ccc;">AdSense Slot</div>
-        <button id="dl-ready" style="display:none; padding:12px 25px; background:#2563eb; color:white; border:none; border-radius:5px; cursor:pointer;" onclick="makePDF()">Download Now</button>
+    <div style="background:white; padding:30px; border-radius:15px; color:black; width:90%; max-width:350px;">
+        <h3>Generating PDF...</h3>
+        <div style="height:200px; background:#f3f4f6; margin:20px 0; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center;">Ad Slot</div>
+        <button id="dl-ready" style="display:none; padding:12px 25px; background:#2563eb; color:white; border:none; border-radius:5px;" onclick="makePDF()">Download Now</button>
     </div>
 </div>
 
 <script>
-    let currentDesign = 'sidebar';
+    let currentD = 'sidebar';
     let userImg = '';
 
     function switchT(t) {
         document.getElementById('edit-p').style.display = (t === 'edit') ? 'block' : 'none';
         document.getElementById('view-p').style.display = (t === 'view') ? 'flex' : 'none';
-        const btns = document.querySelectorAll('.tab-btn');
-        btns[0].classList.toggle('active', t === 'edit');
-        btns[1].classList.toggle('active', t === 'view');
+        document.getElementById('btn-edit').classList.toggle('active', t === 'edit');
+        document.getElementById('btn-view').classList.toggle('active', t === 'view');
     }
 
-    function setD(d, btn) {
-        currentDesign = d;
-        document.querySelectorAll('.design-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        upd();
-    }
+    function setD(val) { currentD = val; upd(); }
 
     function loadI(e) {
         const reader = new FileReader();
@@ -168,99 +151,59 @@
     }
 
     function upd() {
-        const data = {
-            name: document.getElementById('in-name').value || 'Aapka Naam',
-            fname: document.getElementById('in-fname').value,
-            title: document.getElementById('in-title').value || 'Professional Title',
-            phone: document.getElementById('in-phone').value || '0300-1234567',
-            email: document.getElementById('in-email').value || 'email@example.com',
-            addr: document.getElementById('in-address').value || 'City, Pakistan',
-            cnic: document.getElementById('in-cnic').value,
-            obj: document.getElementById('in-obj').value || 'Motivated individual seeking...',
-            edu: document.getElementById('in-edu').value || 'Education details here...',
-            exp: document.getElementById('in-exp').value || 'Experience details here...',
-            proj: document.getElementById('in-proj').value || 'Project info...',
-            cert: document.getElementById('in-cert').value || 'Certificates info...',
-            skills: document.getElementById('in-skills').value || 'MS Word, Excel',
-            lang: document.getElementById('in-lang').value || 'Urdu, English'
-        };
-
+        const v = (id) => document.getElementById(id).value;
         const render = document.getElementById('cv-render');
-        render.className = 'd-' + currentDesign;
+        render.className = 'd-' + currentD;
 
-        let content = '';
-        const photoHtml = userImg ? `<img src="${userImg}" class="cv-photo">` : '';
+        const photoHtml = userImg ? `<img src="${userImg}" class="cv-photo">` : `<div class="cv-photo" style="display:flex; align-items:center; justify-content:center; color:#999; font-size:12px;">No Photo</div>`;
 
-        if(currentDesign === 'sidebar') {
-            content = `
+        let html = '';
+        if(currentD === 'sidebar') {
+            html = `
                 <div class="left">
                     ${photoHtml}
                     <div class="cv-header-line">CONTACT <hr></div>
-                    <div class="cv-text">${data.phone}\n${data.email}\n${data.addr}</div>
-                    ${data.cnic ? `<div class="cv-text"><span class="label">CNIC:</span> ${data.cnic}</div>` : ''}
+                    <p style="font-size:12px; margin-bottom:5px;">${v('in-phone') || '0300-0000000'}</p>
+                    <p style="font-size:12px; margin-bottom:5px;">${v('in-email') || 'user@mail.com'}</p>
+                    <p style="font-size:12px; margin-bottom:5px;">${v('in-addr') || 'City, Pakistan'}</p>
+                    ${v('in-cnic') ? `<p style="font-size:11px; opacity:0.8;">CNIC: ${v('in-cnic')}</p>` : ''}
                     
                     <div class="cv-header-line">SKILLS <hr></div>
-                    <div class="cv-text">${data.skills}</div>
+                    <p style="font-size:12px; white-space:pre-line;">${v('in-skills') || 'Your Skills'}</p>
                     
                     <div class="cv-header-line">LANGUAGES <hr></div>
-                    <div class="cv-text">${data.lang}</div>
+                    <p style="font-size:12px;">${v('in-lang') || 'Urdu, English'}</p>
                 </div>
                 <div class="right">
-                    <h1 style="font-size:32px; color:#1e293b;">${data.name}</h1>
-                    <p style="font-size:18px; color:#64748b; margin-bottom:20px;">${data.title}</p>
-                    ${data.fname ? `<p class="cv-text"><span class="label">Father Name:</span> ${data.fname}</p>` : ''}
+                    <h1 style="font-size:32px;">${v('in-name') || 'Your Name'}</h1>
+                    <p style="font-size:18px; color:#666; margin-bottom:15px;">${v('in-title') || 'Job Title'}</p>
+                    ${v('in-fname') ? `<p style="font-size:14px; margin-bottom:20px;"><b>Father Name:</b> ${v('in-fname')}</p>` : ''}
                     
-                    <div class="cv-header-line">PROFILE <hr></div>
-                    <div class="cv-text">${data.obj}</div>
+                    <div class="cv-header-line" style="color:#1e293b;">OBJECTIVE <hr></div>
+                    <p style="font-size:13px; line-height:1.6;">${v('in-obj') || 'Seek opportunity to grow...'}</p>
                     
-                    <div class="cv-header-line">EDUCATION <hr></div>
-                    <div class="cv-text">${data.edu}</div>
+                    <div class="cv-header-line" style="color:#1e293b;">EDUCATION <hr></div>
+                    <p style="font-size:13px; white-space:pre-line;">${v('in-edu') || 'Education info...'}</p>
                     
-                    <div class="cv-header-line">EXPERIENCE <hr></div>
-                    <div class="cv-text">${data.exp}</div>
-                    
-                    <div class="cv-header-line">PROJECTS & CERTIFICATES <hr></div>
-                    <div class="cv-text">${data.proj}\n${data.cert}</div>
+                    <div class="cv-header-line" style="color:#1e293b;">EXPERIENCE <hr></div>
+                    <p style="font-size:13px; white-space:pre-line;">${v('in-exp') || 'Experience info...'}</p>
                 </div>`;
         } else {
-            // Single Column Layout for other designs
-            content = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <div>
-                        <h1 style="font-size:30px;">${data.name}</h1>
-                        <p style="font-size:18px; color:#666;">${data.title}</p>
-                        <p class="cv-text" style="margin-top:10px;">${data.phone} | ${data.email} | ${data.addr}</p>
-                        ${data.fname ? `<span class="cv-text"><span class="label">Father:</span> ${data.fname}</span>` : ''}
-                        ${data.cnic ? ` | <span class="cv-text"><span class="label">CNIC:</span> ${data.cnic}</span>` : ''}
-                    </div>
+            // Basic Single Column for others
+            html = `<div style="padding:15mm;">
+                <div style="display:flex; justify-content:space-between;">
+                    <div><h1>${v('in-name') || 'Your Name'}</h1><p>${v('in-title')}</p></div>
                     ${photoHtml}
                 </div>
-                
-                <div class="cv-header-line">OBJECTIVE <hr></div>
-                <div class="cv-text">${data.obj}</div>
-                
-                <div class="cv-header-line">EDUCATION <hr></div>
-                <div class="cv-text">${data.edu}</div>
-                
-                <div class="cv-header-line">EXPERIENCE <hr></div>
-                <div class="cv-text">${data.exp}</div>
-                
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                    <div>
-                        <div class="cv-header-line">SKILLS <hr></div>
-                        <div class="cv-text">${data.skills}</div>
-                    </div>
-                    <div>
-                        <div class="cv-header-line">LANGUAGES <hr></div>
-                        <div class="cv-text">${data.lang}</div>
-                    </div>
-                </div>
-
-                <div class="cv-header-line">PROJECTS & CERTIFICATES <hr></div>
-                <div class="cv-text">${data.proj}\n${data.cert}</div>
-            `;
+                <hr style="margin:15px 0;">
+                <p><b>Phone:</b> ${v('in-phone')} | <b>Email:</b> ${v('in-email')}</p>
+                <div class="cv-header-line" style="color:#333;">EDUCATION <hr></div>
+                <p style="white-space:pre-line;">${v('in-edu')}</p>
+                <div class="cv-header-line" style="color:#333;">EXPERIENCE <hr></div>
+                <p style="white-space:pre-line;">${v('in-exp')}</p>
+            </div>`;
         }
-        render.innerHTML = content;
+        render.innerHTML = html;
     }
 
     function showA() {
@@ -272,13 +215,12 @@
         document.getElementById('ad-modal').style.display = 'none';
         const element = document.getElementById('cv-render');
         html2pdf().set({
-            margin: 0, filename: 'Professional_CV.pdf',
-            html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin: 0, filename: 'My_Professional_CV.pdf',
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
     }
-
-    // Initial load
-    upd();
+    upd(); // Initial Run
 </script>
 </body>
 </html>
