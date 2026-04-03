@@ -47,6 +47,22 @@
         .btn { padding: 16px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-dl { background: #27ae60; color: white; display: none; }
         .btn-unlock { background: #e74c3c; color: white; }
+
+        /* --- MERE ADD KIYE HUYE STYLES --- */
+        .site-footer { 
+            background: #000; 
+            color: #fff; 
+            padding: 40px 20px; 
+            text-align: center; 
+            width: 100%; 
+            border-top: 3px solid #8b0000; 
+            margin-top: 50px;
+            font-family: 'Segoe UI', sans-serif;
+            position: relative;
+            z-index: 500;
+        }
+        .site-footer a { color: #ff4d4d; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 14px; }
+        .site-footer p { color: #888; font-size: 12px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -124,7 +140,18 @@
         </div>
     </div>
 
-    <div class="ad-slot">ADS PLACEHOLDER - FOOTER</div>
+    <footer class="site-footer">
+        <div style="margin-bottom: 15px;">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="contact.html">Contact Us</a>
+        </div>
+        <div style="color: #666; font-size: 13px;">
+            &copy; 2026 <b>CV Master Pro</b>. Built for Professional Growth.
+        </div>
+        <p>Google AdSense Compliance & SEO Optimized</p>
+    </footer>
 
     <script>
         function openApp() {
