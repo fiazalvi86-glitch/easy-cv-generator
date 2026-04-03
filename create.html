@@ -3,220 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite CV Maker Pro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <title>Master CV Maker - Ad Ready</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        :root { --p-color: #f1c40f; --s-color: #2c3e50; }
+        :root { --main: #f1c40f; --dark: #1e293b; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: #eef2f3; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-
-        /* Ad Banners */
-        .top-ad { width: 100%; height: 60px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #999; }
-        .side-ad { width: 120px; background: #fff; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; color: #999; }
-
-        .tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; }
-        .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: bold; color: #666; }
-        .tab.active { color: var(--p-color); border-bottom: 3px solid var(--p-color); }
-
-        .main-wrap { display: flex; flex: 1; overflow: hidden; }
-        .editor { width: 350px; background: white; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
         
-        /* CENTERED PREVIEW FIX */
-        .preview-area { flex: 1; background: #525659; overflow: auto; display: flex; justify-content: center; padding: 40px 20px; }
+        /* Layout Centering */
+        body { background: #525659; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* CV BOX - Pure A4 */
-        #cv-box { 
+        .ad-banner { width: 100%; max-width: 728px; height: 90px; background: #fff; margin: 10px 0; display: flex; align-items: center; justify-content: center; color: #ccc; border: 1px solid #ddd; }
+        
+        #cv-container { 
             background: white; 
             width: 210mm; 
             min-height: 296mm; 
-            display: flex !important; 
-            flex-direction: row !important;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            transform-origin: top center;
+            display: flex; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            margin: 20px auto;
         }
 
-        /* Sidebar & Main */
-        .sb { width: 35%; background: var(--s-color); color: white; padding: 10mm 5mm; }
-        .cn { width: 65%; background: white; padding: 10mm 8mm; color: #333; }
-
-        /* Design Elements */
-        .photo-p { width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--p-color); object-fit: cover; margin: 0 auto 15px; display: block; }
-        .name-hd h1 { font-size: 26px; color: var(--p-color); text-transform: uppercase; line-height: 1; }
-        .name-hd p { font-size: 14px; margin-bottom: 5px; color: #eee; }
-        .f-name { font-size: 13px; color: #ddd; margin-bottom: 20px; font-style: italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px; }
-
-        /* Icon Sections */
-        .sec-h { display: flex; align-items: center; gap: 10px; margin: 15px 0 10px; }
-        .sec-h i { color: var(--p-color); }
-        .sec-h h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 3px; }
-        .cn .sec-h h3 { color: var(--s-color); border-bottom: 2px solid #f0f0f0; }
-
-        .item { border-left: 2px solid var(--p-color); padding-left: 12px; margin-left: 10px; position: relative; margin-bottom: 15px; }
-        .item::before { content: ''; width: 10px; height: 10px; background: var(--p-color); border-radius: 50%; position: absolute; left: -6px; top: 5px; }
-
-        /* Modal Ads */
-        #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
-        .ad-box { background: white; padding: 30px; border-radius: 12px; text-align: center; width: 90%; max-width: 400px; }
-
+        /* Responsive Scaling for Mobile */
         @media (max-width: 900px) {
-            .editor, .preview-area { width: 100%; display: none; }
-            .active-p { display: flex !important; }
-            .preview-area.active-p { justify-content: center; align-items: flex-start; padding: 10px 0; }
-            #cv-box { transform: scale(calc(100vw / 210mm - 0.05)); transform-origin: top center; margin: 0; }
+            body { padding: 10px; }
+            #cv-container { 
+                transform: scale(calc(100vw / 210mm - 0.1)); 
+                transform-origin: top center; 
+                margin-bottom: -150mm; /* Fix for whitespace */
+            }
         }
 
-        /* Themes */
-        .t-blue { --s-color: #1a237e; --p-color: #00bcd4; }
-        .t-green { --s-color: #1b5e20; --p-color: #8bc34a; }
-        .t-red { --s-color: #b71c1c; --p-color: #ff5252; }
-        .t-black { --s-color: #000000; --p-color: #d4af37; }
-        .t-purple { --s-color: #4a148c; --p-color: #e040fb; }
+        /* Sidebar & Content */
+        .side { width: 35%; background: var(--dark); color: white; padding: 15mm 8mm; }
+        .main { width: 65%; background: white; padding: 15mm 10mm; color: #333; }
+
+        .header-info h1 { color: var(--main); font-size: 28px; text-transform: uppercase; }
+        .header-info p { font-size: 14px; margin-bottom: 2px; }
+        .f-name { font-size: 12px; color: #cbd5e1; margin-bottom: 20px; font-style: italic; }
+
+        .sec-title { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .sec-title i { color: var(--main); }
         
-        .form-g { margin-bottom: 12px; }
-        label { font-size: 11px; font-weight: bold; }
-        input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 4px; }
+        /* Ad Buttons */
+        .controls { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 999; }
+        .btn { padding: 12px 25px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-ad { background: #e74c3c; color: white; }
+        .btn-dl { background: #27ae60; color: white; }
     </style>
 </head>
 <body>
 
-<div class="top-ad">BANNER AD SLOT (728x90)</div>
+    <div class="ad-banner">ADSENSE BANNER HERE</div>
 
-<div class="tabs">
-    <div class="tab active" onclick="sw('edit', this)">1. Details</div>
-    <div class="tab" onclick="sw('view', this)">2. Preview</div>
-</div>
-
-<div class="main-wrap">
-    <div class="editor active-p" id="edit-sec">
-        <div class="form-g">
-            <label>Choose High-End Design</label>
-            <select id="th-select" onchange="u()">
-                <option value="">1. Modern Yellow (Default)</option>
-                <option value="t-blue">2. Corporate Blue</option>
-                <option value="t-green">3. Eco Green</option>
-                <option value="t-red">4. Executive Red</option>
-                <option value="t-black">5. Royal Gold</option>
-                <option value="t-purple">6. Creative Purple</option>
-            </select>
-        </div>
-        <div class="form-g"><label>Photo</label><input type="file" id="up-img" accept="image/*"></div>
-        <div class="form-g"><label>Full Name</label><input type="text" id="i-name" placeholder="Fiaz" oninput="u()"></div>
-        <div class="form-g"><label>Father's Name</label><input type="text" id="i-fname" placeholder="S/O Name" oninput="u()"></div>
-        <div class="form-g"><label>Job Title</label><input type="text" id="i-title" placeholder="Developer" oninput="u()"></div>
-        <div class="form-g"><label>Profile Objective</label><textarea id="i-obj" rows="2" oninput="u()"></textarea></div>
-        <div class="form-g"><label>Work & Education</label><textarea id="i-exp" placeholder="Experience..." oninput="u()"></textarea></div>
-        <div class="form-g"><label>Skills (comma separated)</label><input type="text" id="i-sk" oninput="u()"></div>
-        
-        <button class="dl-btn" onclick="preDl()" style="width:100%; padding:15px; background:#27ae60; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">DOWNLOAD CV</button>
-    </div>
-
-    <div class="side-ad">VERTICAL AD SLOT (160x600)</div>
-
-    <div class="preview-area" id="view-sec">
-        <div id="cv-box">
-            <div class="sb">
-                <img src="" id="o-img" class="photo-p" style="display:none;">
-                <div id="o-ph" style="width:130px;height:130px;border-radius:50%;background:#444;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;border:4px solid var(--p-color);"><i class="fas fa-user fa-3x"></i></div>
-                
-                <div class="name-hd">
-                    <h1 id="o-name">NAME</h1>
-                    <p id="o-title">Job Title</p>
-                    <div id="o-fname" class="f-name">S/O: Father Name</div>
-                </div>
-
-                <div class="sec-h"><i class="fas fa-phone"></i> <h3>Contact</h3></div>
-                <p id="o-con" style="font-size:11px; color:#ccc;">Phone, Email, City</p>
-                
-                <div class="sec-h"><i class="fas fa-cog"></i> <h3>Skills</h3></div>
-                <div id="o-sk" style="font-size:11px; line-height:1.8;"></div>
+    <div id="cv-container">
+        <div class="side">
+            <div id="photo-area" style="text-align:center; margin-bottom:20px;">
+                <div style="width:140px; height:140px; border-radius:50%; border:5px solid var(--main); background:#444; margin:0 auto;"></div>
             </div>
-
-            <div class="cn">
-                <div class="sec-h"><i class="fas fa-user-tie"></i> <h3>Profile</h3></div>
-                <p id="o-obj" style="font-size:12px; line-height:1.6; color:#555;">Objective content...</p>
-
-                <div class="sec-h"><i class="fas fa-history"></i> <h3>Experience</h3></div>
-                <div id="o-exp"></div>
+            
+            <div class="header-info">
+                <h1 id="out-name">FIAZ</h1>
+                <p id="out-title">Professional Developer</p>
+                <div id="out-fname">S/O: Father's Name Here</div>
             </div>
+            
+            <div class="sec-title"><i class="fas fa-phone"></i> <h3>Contact</h3></div>
+            <p style="font-size:12px;">+92 3xx xxxxxxx</p>
+        </div>
+
+        <div class="main">
+            <div class="sec-title"><i class="fas fa-user"></i> <h3>Profile</h3></div>
+            <p style="font-size:13px;">Enter your summary here...</p>
         </div>
     </div>
-</div>
 
-<div id="ad-modal">
-    <div class="ad-box">
-        <h3>Finalizing Your PDF...</h3>
-        <div style="height:250px; background:#f9f9f9; border:1px dashed #ccc; margin:20px 0; display:flex; align-items:center; justify-content:center; color:#999;">
-            INTERSTITIAL AD SLOT
-        </div>
-        <button onclick="finalDl()" style="padding:10px 30px; background:var(--p-color); border:none; border-radius:5px; font-weight:bold; cursor:pointer;">CONTINUE TO DOWNLOAD</button>
+    <div class="controls">
+        <button class="btn btn-ad"><i class="fas fa-play"></i> Watch Ad to Unlock</button>
+        <button class="btn btn-dl" onclick="downloadPDF()"><i class="fas fa-download"></i> Download HQ PDF</button>
     </div>
-</div>
 
-<script>
-    function sw(t, b) {
-        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        document.getElementById('edit-sec').classList.toggle('active-p', t === 'edit');
-        document.getElementById('view-sec').classList.toggle('active-p', t === 'view');
-    }
-
-    function u() {
-        const g = (id) => document.getElementById(id).value;
-        const box = document.getElementById('cv-box');
-        box.className = g('th-select');
-
-        document.getElementById('o-name').innerText = g('i-name') || "NAME";
-        document.getElementById('o-title').innerText = g('i-title') || "Title";
-        document.getElementById('o-fname').innerText = g('i-fname') ? "S/O: " + g('i-fname') : "S/O: Father Name";
-        document.getElementById('o-obj').innerText = g('i-obj') || "Enter objective...";
-
-        const lines = g('i-exp').split('\n');
-        let h = '';
-        lines.forEach(l => { if(l.trim()) h += `<div class="item"><b>${l.trim()}</b><p>Details here.</p></div>`; });
-        document.getElementById('o-exp').innerHTML = h;
-
-        const sks = g('i-sk').split(',');
-        document.getElementById('o-sk').innerHTML = sks.map(s => s.trim() ? `• ${s.trim()}<br>` : '').join('');
-    }
-
-    function preDl() {
-        document.getElementById('ad-modal').style.display = 'flex';
-    }
-
-    function finalDl() {
-        document.getElementById('ad-modal').style.display = 'none';
-        const el = document.getElementById('cv-box');
-        // Reset scale for high quality capture
-        const originalTransform = el.style.transform;
-        el.style.transform = 'none';
-
-        const opt = {
-            margin: 0,
-            filename: 'Elite_CV.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 3, useCORS: true, letterRendering: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opt).from(el).toPdf().get('pdf').then(() => {
-            el.style.transform = originalTransform;
-        }).save();
-    }
-
-    document.getElementById('up-img').onchange = function(e) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            document.getElementById('o-img').src = ev.target.result;
-            document.getElementById('o-img').style.display = 'block';
-            document.getElementById('o-ph').style.display = 'none';
-        };
-        reader.readAsDataURL(e.target.files[0]);
-    };
-    u();
-</script>
+    <script>
+        function downloadPDF() {
+            const element = document.getElementById('cv-container');
+            html2pdf().set({
+                margin: 0,
+                filename: 'Premium_CV.pdf',
+                html2canvas: { scale: 3, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(element).save();
+        }
+    </script>
 </body>
 </html>
