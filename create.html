@@ -3,227 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV Master Pro | Premium Resume Builder</title>
+    <title>CV Master Pro | Premium Edition</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --main: #f1c40f; --dark: #1e293b; --red: #e74c3c; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        
-        body { background: #333; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 15px; }
-
-        /* Top Banner Ad Slot */
-        .ad-top { width: 100%; max-width: 728px; height: 90px; background: #fff; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; font-size: 10px; color: #bbb; border-radius: 8px; }
+        :root { --main: #ffffff; --dark: #8b0000; --side-txt: #ffffff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+        body { background: #2c3e50; display: flex; flex-direction: column; align-items: center; padding: 20px; }
 
         /* Control Panel */
-        .panel { width: 100%; max-width: 850px; background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .panel-header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
-        .brand { font-weight: 700; color: var(--red); font-size: 22px; letter-spacing: 1px; }
+        .admin-box { width: 100%; max-width: 900px; background: #fff; padding: 25px; border-radius: 15px; margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+        .brand-l { grid-column: 1 / -1; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        .brand-l h2 { color: #e74c3c; letter-spacing: 2px; }
 
-        /* Themes */
-        .theme-red { --dark: #7b0d0d; --main: #ffffff; --text-side: #fff; }
-        .theme-yellow { --dark: #1e293b; --main: #f1c40f; --text-side: #fff; }
-        .theme-gold { --dark: #000000; --main: #d4af37; --text-side: #fff; }
+        /* Themes Configuration */
+        .t-red { --dark: #8b0000; --main: #ffcece; }
+        .t-blue { --dark: #1a237e; --main: #c5cae9; }
+        .t-charcoal { --dark: #263238; --main: #b0bec5; }
+        .t-gold { --dark: #000000; --main: #d4af37; }
+        .t-green { --dark: #1b5e20; --main: #c8e6c9; }
+        .t-purple { --dark: #4a148c; --main: #e1bee7; }
 
-        /* CV Preview Box */
-        .cv-scroll { width: 100%; display: flex; justify-content: center; overflow-x: auto; padding-bottom: 40px; }
-        #cv-box { 
-            background: white; width: 210mm; min-height: 296mm; display: flex !important; flex-direction: row !important; 
-            box-shadow: 0 0 40px rgba(0,0,0,0.8); transform-origin: top center;
+        /* CV Box */
+        .cv-wrap { width: 100%; display: flex; justify-content: center; overflow-x: auto; }
+        #cv-render { 
+            background: white; width: 210mm; min-height: 296mm; display: flex !important; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.7); transform-origin: top center;
         }
 
-        /* CV Sections */
-        .sidebar { width: 35%; background: var(--dark); color: var(--text-side); padding: 15mm 7mm; transition: 0.4s; }
-        .main-content { width: 65%; background: white; padding: 15mm 10mm; color: #333; }
+        /* Sidebar Styling (Tarteeb Fix) */
+        .side { width: 35%; background: var(--dark); color: var(--side-txt); padding: 15mm 8mm; }
+        .pic-holder { width: 145px; height: 145px; border-radius: 50%; border: 4px solid var(--main); margin: 0 auto 20px; overflow: hidden; background: #333; display: flex; align-items: center; justify-content: center; }
+        .pic-holder img { width: 100%; height: 100%; object-fit: cover; }
 
-        .profile-img { width: 140px; height: 140px; border-radius: 50%; border: 5px solid var(--main); object-fit: cover; margin: 0 auto 20px; display: block; background: #444; }
+        .name-info { text-align: center; margin-bottom: 30px; }
+        .name-info h1 { font-size: 24px; color: var(--main); text-transform: uppercase; margin-bottom: 5px; }
+        .name-info .f-label { font-size: 13px; font-style: italic; opacity: 0.9; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; }
+        .name-info .title-label { font-size: 14px; margin-top: 5px; font-weight: 300; }
+
+        .contact-box { margin-bottom: 30px; }
+        .c-item { display: flex; align-items: center; gap: 10px; font-size: 11px; margin-bottom: 12px; }
+        .c-item i { color: var(--main); width: 15px; }
+
+        .skills-list { font-size: 11px; line-height: 1.8; }
+        .side-head { font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--main); margin-bottom: 10px; padding-bottom: 3px; color: var(--main); margin-top: 20px; }
+
+        /* Main Content */
+        .body { width: 65%; padding: 15mm 10mm; color: #333; }
+        .main-head { display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #eee; margin: 25px 0 15px; padding-bottom: 5px; color: var(--dark); }
+        .main-head i { color: var(--dark); }
         
-        .name-tag h1 { font-size: 28px; color: var(--main); text-transform: uppercase; line-height: 1; margin-bottom: 5px; }
-        .name-tag p { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
-        .f-name { font-size: 12px; color: var(--main); font-style: italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px; margin-bottom: 25px; }
+        .edu-item { margin-bottom: 15px; border-left: 3px solid var(--dark); padding-left: 15px; position: relative; }
+        .edu-item::after { content: ''; width: 10px; height: 10px; background: var(--dark); border-radius: 50%; position: absolute; left: -7px; top: 5px; }
 
-        .section-h { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px; }
-        .main-content .section-h { border-bottom: 2px solid #eee; color: var(--dark); }
-        .section-h i { color: var(--main); font-size: 14px; }
+        /* Modal & Ads */
+        #c-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 99; flex-direction: column; align-items: center; justify-content: center; }
+        .btn-ui { padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .btn-ad { background: #e74c3c; color: white; grid-column: span 2; }
+        .btn-dl { background: #27ae60; color: white; grid-column: span 2; display: none; }
 
-        .job-card { border-left: 2px solid var(--main); padding-left: 15px; margin-left: 10px; margin-bottom: 20px; position: relative; }
-        .job-card::before { content: ''; width: 10px; height: 10px; background: var(--main); border-radius: 50%; position: absolute; left: -6px; top: 5px; }
-
-        /* Cropper Modal */
-        #crop-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        .crop-box { background: white; padding: 20px; border-radius: 10px; text-align: center; }
-        .btn-crop { padding: 10px 30px; background: var(--red); color: white; border: none; font-weight: bold; margin-top: 15px; border-radius: 5px; cursor: pointer; }
-
-        /* Ad Unlock Buttons */
-        .btn-group { grid-column: 1 / -1; display: flex; gap: 10px; }
-        .action-btn { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-        .btn-red { background: var(--red); color: white; }
-        .btn-green { background: #27ae60; color: white; display: none; }
-        .btn-red:hover { background: #c0392b; }
-
-        /* Input Styling */
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px; font-size: 13px; }
-        label { font-size: 11px; font-weight: bold; color: #666; text-transform: uppercase; }
-
-        @media (max-width: 900px) { #cv-box { transform: scale(calc(100vw / 210mm - 0.05)); } }
+        @media (max-width: 900px) { #cv-render { transform: scale(calc(100vw / 210mm - 0.08)); } }
     </style>
 </head>
-<body class="theme-red">
+<body class="t-red">
 
-    <div class="ad-top">GOOGLE ADSENSE BANNER SLOT (728x90)</div>
-
-    <div class="panel">
-        <div class="panel-header">
-            <div class="brand">CV MASTER PRO <i class="fas fa-certificate"></i></div>
-            <div style="font-size: 11px; color: #888;">Premium Auto-Video Creator Tool</div>
-        </div>
-
-        <div>
-            <label>1. Choose Style</label>
+    <div class="admin-box">
+        <div class="brand-l"><h2>CV MASTER PRO <i class="fas fa-gem"></i></h2></div>
+        
+        <div><label>Select Design</label>
             <select onchange="document.body.className = this.value">
-                <option value="theme-red">Executive Red (Modern)</option>
-                <option value="theme-yellow">Dark & Yellow (Classic)</option>
-                <option value="theme-gold">Black & Gold (Premium)</option>
+                <option value="t-red">1. Deep Red</option>
+                <option value="t-blue">2. Midnight Blue</option>
+                <option value="t-charcoal">3. Charcoal Grey</option>
+                <option value="t-gold">4. Royal Gold</option>
+                <option value="t-green">5. Forest Green</option>
+                <option value="t-purple">6. Elegant Purple</option>
             </select>
         </div>
-
-        <div>
-            <label>2. Upload Photo</label>
-            <input type="file" id="pic-upload" accept="image/*">
-        </div>
-
-        <div><label>Full Name</label><input type="text" id="in-name" placeholder="Fiaz" oninput="u()"></div>
-        <div><label>Father Name</label><input type="text" id="in-fname" placeholder="Father Name" oninput="u()"></div>
-        <div><label>Job Title</label><input type="text" id="in-title" placeholder="Full Stack Developer" oninput="u()"></div>
-
-        <div class="btn-group">
-            <button class="action-btn btn-red" id="btn-unlock" onclick="startAd()">
-                <i class="fas fa-play-circle"></i> WATCH AD TO DOWNLOAD CV
-            </button>
-            <button class="action-btn btn-green" id="btn-dl" onclick="finalDownload()">
-                <i class="fas fa-cloud-download-alt"></i> DOWNLOAD PREMIUM PDF
-            </button>
-        </div>
+        <div><label>Photo</label><input type="file" id="up-f" accept="image/*"></div>
+        <div><label>Full Name</label><input type="text" id="in-n" placeholder="Fiaz Alvi" oninput="run()"></div>
+        <div><label>Father Name</label><input type="text" id="in-fn" placeholder="Father's Name" oninput="run()"></div>
+        <div><label>Job Title</label><input type="text" id="in-t" placeholder="Senior Developer" oninput="run()"></div>
+        <div><label>Phone</label><input type="text" id="in-p" placeholder="+92 300 1234567" oninput="run()"></div>
+        <div><label>Email</label><input type="text" id="in-e" placeholder="fiaz@example.com" oninput="run()"></div>
+        
+        <button class="btn-ui btn-ad" id="ad-b" onclick="playAd()">Watch Ad & Unlock PDF</button>
+        <button class="btn-ui btn-dl" id="dl-b" onclick="savePdf()">Download High Quality CV</button>
     </div>
 
-    <div id="crop-modal">
-        <div class="crop-box">
-            <h3>Crop Your Profile Photo</h3>
-            <div id="crop-area" style="width: 300px; height: 300px; margin: 10px auto;"></div>
-            <button class="btn-crop" onclick="finishCrop()">DONE - APPLY PHOTO</button>
-        </div>
+    <div id="c-modal">
+        <div id="c-wrap" style="width:300px; height:300px; background:#fff; margin-bottom:20px;"></div>
+        <button class="btn-ui" style="background:#f1c40f;" onclick="doCrop()">Apply & Close</button>
     </div>
 
-    <div class="cv-scroll">
-        <div id="cv-box">
-            <div class="sidebar">
-                <img src="" id="cv-img" class="profile-img" style="display:none;">
-                <div id="img-placeholder" style="width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.1);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;border:5px solid var(--main);"><i class="fas fa-user-tie fa-4x"></i></div>
-                
-                <div class="name-tag">
-                    <h1 id="out-name">YOUR NAME</h1>
-                    <p id="out-title">Professional Title</p>
-                    <div id="out-fname" class="f-name">S/O: Father's Name</div>
+    <div class="cv-wrap">
+        <div id="cv-render">
+            <div class="side">
+                <div class="pic-holder">
+                    <img src="" id="res-img" style="display:none;">
+                    <i class="fas fa-user-circle fa-5x" id="def-ico" style="opacity:0.3"></i>
                 </div>
 
-                <div class="section-h"><i class="fas fa-id-card"></i> <h3>Contact</h3></div>
-                <div style="font-size: 11px; line-height: 2;">
-                    <i class="fas fa-phone"></i> +92 3XX XXXXXXX<br>
-                    <i class="fas fa-envelope"></i> yourname@email.com<br>
-                    <i class="fas fa-map-marker-alt"></i> Karachi, Pakistan
+                <div class="name-info">
+                    <h1 id="res-n">YOUR NAME</h1>
+                    <div class="f-label" id="res-fn">S/O: Father's Name</div>
+                    <div class="title-label" id="res-t">Professional Job Title</div>
                 </div>
 
-                <div class="section-h"><i class="fas fa-brain"></i> <h3>Expertise</h3></div>
-                <div style="font-size: 11px;">
-                    • Python Development<br>• Video Automation<br>• UI/UX Design
+                <div class="side-head">Contact Me</div>
+                <div class="contact-box">
+                    <div class="c-item"><i class="fas fa-phone"></i> <span id="res-p">+92 3xx xxxxxxx</span></div>
+                    <div class="c-item"><i class="fas fa-envelope"></i> <span id="res-e">email@domain.com</span></div>
+                    <div class="c-item"><i class="fas fa-map-marker-alt"></i> <span>Karachi, Pakistan</span></div>
+                </div>
+
+                <div class="side-head">Key Skills</div>
+                <div class="skills-list">
+                    • Python & Automation<br>• UI/UX Modern Design<br>• Video Editing Tools<br>• Web Development
                 </div>
             </div>
 
-            <div class="main-content">
-                <div class="section-h"><i class="fas fa-bullseye"></i> <h3>Career Objective</h3></div>
-                <p style="font-size: 12px; line-height: 1.6; color: #555;">Result-oriented professional with a strong background in developing automated solutions for video production and media management.</p>
+            <div class="body">
+                <div class="main-head"><i class="fas fa-user"></i> <h3>Professional Profile</h3></div>
+                <p style="font-size:12px; line-height:1.6; color:#444;">Creative and detail-oriented professional with a passion for building automated systems and high-quality visual content. Expert in streamlining workflows.</p>
 
-                <div class="section-h"><i class="fas fa-briefcase"></i> <h3>Work Experience</h3></div>
-                <div class="job-card">
-                    <b style="font-size: 14px;">Senior Content Automator</b><br>
-                    <span style="font-size: 11px; color: #888;">2024 - Present</span>
-                    <p style="font-size: 12px; margin-top: 5px;">Led the development of Infographic Maker Pro for high-speed video ranking generation.</p>
+                <div class="main-head"><i class="fas fa-graduation-cap"></i> <h3>Education History</h3></div>
+                <div class="edu-item">
+                    <b style="font-size:14px;">Master of Computer Science</b><br>
+                    <span style="font-size:11px; color:#777;">2020 - 2022 | University of Karachi</span>
+                </div>
+                <div class="edu-item">
+                    <b style="font-size:14px;">Bachelor of Information Technology</b><br>
+                    <span style="font-size:11px; color:#777;">2016 - 2020 | Govt College</span>
                 </div>
 
-                <div class="section-h"><i class="fas fa-graduation-cap"></i> <h3>Academic Background</h3></div>
-                <div class="job-card">
-                    <b style="font-size: 14px;">BS Computer Science</b><br>
-                    <span style="font-size: 11px; color: #888;">University of Excellence</span>
+                <div class="main-head"><i class="fas fa-briefcase"></i> <h3>Work Experience</h3></div>
+                <div class="edu-item">
+                    <b style="font-size:14px;">Senior Developer & Content Creator</b><br>
+                    <span style="font-size:11px; color:#777;">2023 - Present | Tech Solutions</span>
+                    <p style="font-size:11px; margin-top:5px;">Developed Infographic Maker Pro and managed automated YouTube channels.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let cropper;
-        const upload = document.getElementById('pic-upload');
-
-        // 1. Live Update Logic
-        function u() {
-            document.getElementById('out-name').innerText = document.getElementById('in-name').value.toUpperCase() || "YOUR NAME";
-            document.getElementById('out-title').innerText = document.getElementById('in-title').value || "Professional Title";
-            document.getElementById('out-fname').innerText = document.getElementById('in-fname').value ? "S/O: " + document.getElementById('in-fname').value : "S/O: Father's Name";
+        let cr;
+        function run() {
+            const v = (id) => document.getElementById(id).value;
+            document.getElementById('res-n').innerText = v('in-n').toUpperCase() || "YOUR NAME";
+            document.getElementById('res-fn').innerText = v('in-fn') ? "S/O: " + v('in-fn') : "S/O: Father's Name";
+            document.getElementById('res-t').innerText = v('in-t') || "Professional Job Title";
+            document.getElementById('res-p').innerText = v('in-p') || "+92 3xx xxxxxxx";
+            document.getElementById('res-e').innerText = v('in-e') || "email@domain.com";
         }
 
-        // 2. Image Crop Logic
-        upload.onchange = function(e) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                document.getElementById('crop-modal').style.display = 'flex';
-                if (cropper) cropper.destroy();
-                cropper = new Croppie(document.getElementById('crop-area'), {
+        document.getElementById('up-f').onchange = function(e) {
+            const r = new FileReader();
+            r.onload = (ev) => {
+                document.getElementById('c-modal').style.display = 'flex';
+                if(cr) cr.destroy();
+                cr = new Croppie(document.getElementById('c-wrap'), {
                     viewport: { width: 150, height: 150, type: 'circle' },
-                    boundary: { width: 250, height: 250 },
-                    showZoomer: true
+                    boundary: { width: 250, height: 250 }
                 });
-                cropper.bind({ url: event.target.result });
+                cr.bind({ url: ev.target.result });
             }
-            reader.readAsDataURL(this.files[0]);
+            r.readAsDataURL(e.target.files[0]);
         };
 
-        function finishCrop() {
-            cropper.result({ type: 'base64', size: 'viewport' }).then(res => {
-                const img = document.getElementById('cv-img');
-                img.src = res;
-                img.style.display = 'block';
-                document.getElementById('img-placeholder').style.display = 'none';
-                document.getElementById('crop-modal').style.display = 'none';
+        function doCrop() {
+            cr.result({ type: 'base64', size: 'viewport' }).then(res => {
+                document.getElementById('res-img').src = res;
+                document.getElementById('res-img').style.display = 'block';
+                document.getElementById('def-ico').style.display = 'none';
+                document.getElementById('c-modal').style.display = 'none';
             });
         }
 
-        // 3. Ad Simulation Logic
-        function startAd() {
-            const btn = document.getElementById('btn-unlock');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Video Ad Playing... (5s)';
-            btn.disabled = true;
-
+        function playAd() {
+            const b = document.getElementById('ad-b');
+            b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AD LOADING...';
             setTimeout(() => {
-                btn.style.display = 'none';
-                document.getElementById('btn-dl').style.display = 'flex';
-                alert("Congratulation! Premium Download Unlocked.");
-            }, 5000);
+                b.style.display = 'none';
+                document.getElementById('dl-b').style.display = 'block';
+                alert("Ad Finished! Download button unlocked.");
+            }, 4000);
         }
 
-        // 4. HQ Download Logic
-        function finalDownload() {
-            const element = document.getElementById('cv-box');
+        function savePdf() {
+            const el = document.getElementById('cv-render');
             html2pdf().set({
-                margin: 0,
-                filename: 'CV_Master_Pro.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
+                margin: 0, filename: 'CV_Master_Pro.pdf',
+                html2canvas: { scale: 3, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).from(element).save();
+            }).from(el).save();
         }
     </script>
 </body>
