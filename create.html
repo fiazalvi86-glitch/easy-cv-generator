@@ -3,232 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite CV Maker - Ultra High Quality</title>
+    <title>Elite CV Maker Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
+        :root { --p-color: #f1c40f; --s-color: #2c3e50; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; }
+        body { background: #eef2f3; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        .tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+        /* Ad Banners */
+        .top-ad { width: 100%; height: 60px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #999; }
+        .side-ad { width: 120px; background: #fff; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; color: #999; }
+
+        .tabs { display: flex; background: #fff; border-bottom: 2px solid #ddd; }
         .tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; font-weight: bold; color: #666; }
-        .tab.active { color: #f1c40f; border-bottom: 3px solid #f1c40f; }
+        .tab.active { color: var(--p-color); border-bottom: 3px solid var(--p-color); }
 
-        .main-container { display: flex; flex: 1; overflow: hidden; }
-        .editor { width: 35%; background: white; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
-        .preview { width: 65%; background: #333; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
-
-        /* --- CROPPER MODAL --- */
-        #crop-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        #cropper-v { width: 300px; height: 300px; }
-        .crop-btn { padding: 10px 25px; background: #f1c40f; border: none; color: #000; font-weight: bold; margin-top: 20px; border-radius: 5px; cursor: pointer; }
-
-        /* --- CV BOX (A4) --- */
+        .main-wrap { display: flex; flex: 1; overflow: hidden; }
+        .editor { width: 350px; background: white; padding: 20px; overflow-y: auto; border-right: 1px solid #ddd; }
+        
+        /* CENTERED PREVIEW FIX */
+        .preview-area { flex: 1; background: #525659; overflow: auto; display: flex; justify-content: center; padding: 40px 20px; }
+        
+        /* CV BOX - Pure A4 */
         #cv-box { 
             background: white; 
             width: 210mm; 
             min-height: 296mm; 
             display: flex !important; 
             flex-direction: row !important;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            transform-origin: top center;
         }
 
-        .sidebar { width: 35%; background: #2c3e50; color: white; padding: 10mm 5mm; }
-        .main-content { width: 65%; background: white; padding: 10mm 8mm; color: #333; }
+        /* Sidebar & Main */
+        .sb { width: 35%; background: var(--s-color); color: white; padding: 10mm 5mm; }
+        .cn { width: 65%; background: white; padding: 10mm 8mm; color: #333; }
 
-        .photo-wrap { text-align: center; margin-bottom: 20px; }
-        .photo-res { width: 130px; height: 130px; border-radius: 50%; border: 4px solid #f1c40f; object-fit: cover; background: #444; margin: 0 auto; display: block; }
+        /* Design Elements */
+        .photo-p { width: 130px; height: 130px; border-radius: 50%; border: 4px solid var(--p-color); object-fit: cover; margin: 0 auto 15px; display: block; }
+        .name-hd h1 { font-size: 26px; color: var(--p-color); text-transform: uppercase; line-height: 1; }
+        .name-hd p { font-size: 14px; margin-bottom: 5px; color: #eee; }
+        .f-name { font-size: 13px; color: #ddd; margin-bottom: 20px; font-style: italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px; }
 
-        .sec-h { display: flex; align-items: center; gap: 8px; margin: 15px 0 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
-        .main-content .sec-h { border-bottom: 2px solid #f0f0f0; color: #2c3e50; }
-        .sec-h i { color: #f1c40f; }
+        /* Icon Sections */
+        .sec-h { display: flex; align-items: center; gap: 10px; margin: 15px 0 10px; }
+        .sec-h i { color: var(--p-color); }
+        .sec-h h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 3px; }
+        .cn .sec-h h3 { color: var(--s-color); border-bottom: 2px solid #f0f0f0; }
 
-        .info-b { margin-bottom: 10px; font-size: 12px; }
-        .info-b b { color: #f1c40f; display: block; font-size: 11px; text-transform: uppercase; }
+        .item { border-left: 2px solid var(--p-color); padding-left: 12px; margin-left: 10px; position: relative; margin-bottom: 15px; }
+        .item::before { content: ''; width: 10px; height: 10px; background: var(--p-color); border-radius: 50%; position: absolute; left: -6px; top: 5px; }
 
-        .t-item { border-left: 2px solid #f1c40f; padding-left: 15px; margin-left: 10px; position: relative; margin-bottom: 15px; }
-        .t-item::before { content: ''; width: 10px; height: 10px; background: #f1c40f; border-radius: 50%; position: absolute; left: -6px; top: 5px; }
+        /* Modal Ads */
+        #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
+        .ad-box { background: white; padding: 30px; border-radius: 12px; text-align: center; width: 90%; max-width: 400px; }
 
         @media (max-width: 900px) {
-            .main-container { flex-direction: column; overflow: visible; }
-            .editor, .preview { width: 100%; display: none; }
-            .active-p { display: block; }
-            .preview.active-p { display: flex; background: #222; padding: 10px 0; overflow-x: auto; justify-content: flex-start; }
-            #cv-box { transform: scale(calc(100vw / 210mm)); transform-origin: top left; margin-bottom: calc(296mm * (100vw / 210mm) * -1 + 20px); }
+            .editor, .preview-area { width: 100%; display: none; }
+            .active-p { display: flex !important; }
+            .preview-area.active-p { justify-content: center; align-items: flex-start; padding: 10px 0; }
+            #cv-box { transform: scale(calc(100vw / 210mm - 0.05)); transform-origin: top center; margin: 0; }
         }
 
-        /* Form styling */
-        .g { margin-bottom: 12px; }
-        label { font-size: 11px; font-weight: bold; color: #333; }
-        input, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; margin-top: 3px; }
-        .dl-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 15px; }
+        /* Themes */
+        .t-blue { --s-color: #1a237e; --p-color: #00bcd4; }
+        .t-green { --s-color: #1b5e20; --p-color: #8bc34a; }
+        .t-red { --s-color: #b71c1c; --p-color: #ff5252; }
+        .t-black { --s-color: #000000; --p-color: #d4af37; }
+        .t-purple { --s-color: #4a148c; --p-color: #e040fb; }
+        
+        .form-g { margin-bottom: 12px; }
+        label { font-size: 11px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 4px; }
     </style>
 </head>
 <body>
+
+<div class="top-ad">BANNER AD SLOT (728x90)</div>
 
 <div class="tabs">
     <div class="tab active" onclick="sw('edit', this)">1. Details</div>
     <div class="tab" onclick="sw('view', this)">2. Preview</div>
 </div>
 
-<div id="crop-modal">
-    <div id="cropper-v"></div>
-    <button class="crop-btn" onclick="applyCrop()">Crop & Save Photo</button>
-</div>
-
-<div class="main-container">
-    <div class="editor active-p" id="e-sec">
-        <div class="g"><label>Upload Photo (Crop Option Will Appear)</label><input type="file" id="upload" accept="image/*"></div>
-        <div class="g"><label>Full Name</label><input type="text" id="i-name" oninput="u()"></div>
-        <div class="g"><label>Father Name</label><input type="text" id="i-fname" oninput="u()"></div>
-        <div class="g"><label>Job Title</label><input type="text" id="i-title" oninput="u()"></div>
-        <div class="g"><label>Contact (Phone, Email, Address, CNIC)</label>
-            <input type="text" id="i-ph" placeholder="Phone" oninput="u()">
-            <input type="text" id="i-em" placeholder="Email" oninput="u()">
-            <input type="text" id="i-ad" placeholder="City" oninput="u()">
-            <input type="text" id="i-cn" placeholder="CNIC" oninput="u()">
+<div class="main-wrap">
+    <div class="editor active-p" id="edit-sec">
+        <div class="form-g">
+            <label>Choose High-End Design</label>
+            <select id="th-select" onchange="u()">
+                <option value="">1. Modern Yellow (Default)</option>
+                <option value="t-blue">2. Corporate Blue</option>
+                <option value="t-green">3. Eco Green</option>
+                <option value="t-red">4. Executive Red</option>
+                <option value="t-black">5. Royal Gold</option>
+                <option value="t-purple">6. Creative Purple</option>
+            </select>
         </div>
-        <div class="g"><label>Profile Objective</label><textarea id="i-obj" rows="2" oninput="u()"></textarea></div>
-        <div class="g"><label>Work Experience</label><textarea id="i-exp" rows="3" oninput="u()"></textarea></div>
-        <div class="g"><label>Education</label><textarea id="i-edu" rows="3" oninput="u()"></textarea></div>
-        <div class="g"><label>Skills</label><input type="text" id="i-sk" oninput="u()"></div>
-
-        <button class="dl-btn" onclick="dl()">High-Quality Download</button>
-        <div style="height:50px;"></div>
+        <div class="form-g"><label>Photo</label><input type="file" id="up-img" accept="image/*"></div>
+        <div class="form-g"><label>Full Name</label><input type="text" id="i-name" placeholder="Fiaz" oninput="u()"></div>
+        <div class="form-g"><label>Father's Name</label><input type="text" id="i-fname" placeholder="S/O Name" oninput="u()"></div>
+        <div class="form-g"><label>Job Title</label><input type="text" id="i-title" placeholder="Developer" oninput="u()"></div>
+        <div class="form-g"><label>Profile Objective</label><textarea id="i-obj" rows="2" oninput="u()"></textarea></div>
+        <div class="form-g"><label>Work & Education</label><textarea id="i-exp" placeholder="Experience..." oninput="u()"></textarea></div>
+        <div class="form-g"><label>Skills (comma separated)</label><input type="text" id="i-sk" oninput="u()"></div>
+        
+        <button class="dl-btn" onclick="preDl()" style="width:100%; padding:15px; background:#27ae60; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">DOWNLOAD CV</button>
     </div>
 
-    <div class="preview" id="v-sec">
+    <div class="side-ad">VERTICAL AD SLOT (160x600)</div>
+
+    <div class="preview-area" id="view-sec">
         <div id="cv-box">
-            <div class="sidebar">
-                <div class="photo-wrap">
-                    <img src="" id="o-img" class="photo-res" style="display:none;">
-                    <div id="o-placeholder" style="width:130px;height:130px;border-radius:50%;background:#444;margin:0 auto;display:flex;align-items:center;justify-content:center;border:4px solid #f1c40f;"><i class="fas fa-user fa-3x"></i></div>
+            <div class="sb">
+                <img src="" id="o-img" class="photo-p" style="display:none;">
+                <div id="o-ph" style="width:130px;height:130px;border-radius:50%;background:#444;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;border:4px solid var(--p-color);"><i class="fas fa-user fa-3x"></i></div>
+                
+                <div class="name-hd">
+                    <h1 id="o-name">NAME</h1>
+                    <p id="o-title">Job Title</p>
+                    <div id="o-fname" class="f-name">S/O: Father Name</div>
                 </div>
-                <h1 id="o-name" style="font-size:22px; color:#f1c40f;">YOUR NAME</h1>
-                <p id="o-title" style="font-size:14px; margin-bottom:20px;">Title</p>
 
                 <div class="sec-h"><i class="fas fa-phone"></i> <h3>Contact</h3></div>
-                <div class="info-b"><b>Phone</b><span id="o-ph">---</span></div>
-                <div class="info-b"><b>Email</b><span id="o-em">---</span></div>
-                <div class="info-b"><b>Address</b><span id="o-ad">---</span></div>
-                <div class="info-b"><b>CNIC</b><span id="o-cn">---</span></div>
-
-                <div class="sec-h"><i class="fas fa-tools"></i> <h3>Skills</h3></div>
-                <div id="o-sk" style="font-size:11px;"></div>
+                <p id="o-con" style="font-size:11px; color:#ccc;">Phone, Email, City</p>
+                
+                <div class="sec-h"><i class="fas fa-cog"></i> <h3>Skills</h3></div>
+                <div id="o-sk" style="font-size:11px; line-height:1.8;"></div>
             </div>
 
-            <div class="main-content">
-                <div class="sec-h"><i class="fas fa-user-circle"></i> <h3>Profile</h3></div>
-                <p id="o-obj" style="font-size:12px; margin-bottom:20px;">Objective...</p>
+            <div class="cn">
+                <div class="sec-h"><i class="fas fa-user-tie"></i> <h3>Profile</h3></div>
+                <p id="o-obj" style="font-size:12px; line-height:1.6; color:#555;">Objective content...</p>
 
-                <div class="sec-h"><i class="fas fa-briefcase"></i> <h3>Experience</h3></div>
+                <div class="sec-h"><i class="fas fa-history"></i> <h3>Experience</h3></div>
                 <div id="o-exp"></div>
-
-                <div class="sec-h"><i class="fas fa-graduation-cap"></i> <h3>Education</h3></div>
-                <div id="o-edu"></div>
-
-                <div style="margin-top:20px; border-top:1px solid #eee; padding-top:10px;">
-                    <p style="font-size:12px;"><b>Father Name:</b> <span id="o-fname">---</span></p>
-                </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="ad-modal">
+    <div class="ad-box">
+        <h3>Finalizing Your PDF...</h3>
+        <div style="height:250px; background:#f9f9f9; border:1px dashed #ccc; margin:20px 0; display:flex; align-items:center; justify-content:center; color:#999;">
+            INTERSTITIAL AD SLOT
+        </div>
+        <button onclick="finalDl()" style="padding:10px 30px; background:var(--p-color); border:none; border-radius:5px; font-weight:bold; cursor:pointer;">CONTINUE TO DOWNLOAD</button>
     </div>
 </div>
 
 <script>
-    let croppieInst;
-    const uploadInput = document.getElementById('upload');
-
-    // Tab Switch
     function sw(t, b) {
         document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
-        document.getElementById('e-sec').classList.toggle('active-p', t === 'edit');
-        document.getElementById('v-sec').classList.toggle('active-p', t === 'view');
+        document.getElementById('edit-sec').classList.toggle('active-p', t === 'edit');
+        document.getElementById('view-sec').classList.toggle('active-p', t === 'view');
     }
 
-    // Image Upload & Crop Trigger
-    uploadInput.addEventListener('change', function() {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            document.getElementById('crop-modal').style.display = 'flex';
-            if (croppieInst) croppieInst.destroy();
-            croppieInst = new Croppie(document.getElementById('cropper-v'), {
-                viewport: { width: 150, height: 150, type: 'circle' },
-                boundary: { width: 250, height: 250 },
-                showZoomer: true
-            });
-            croppieInst.bind({ url: e.target.result });
-        }
-        reader.readAsDataURL(this.files[0]);
-    });
-
-    function applyCrop() {
-        croppieInst.result({ type: 'base64', size: 'viewport', format: 'jpeg' }).then(res => {
-            const img = document.getElementById('o-img');
-            img.src = res;
-            img.style.display = 'block';
-            document.getElementById('o-placeholder').style.display = 'none';
-            document.getElementById('crop-modal').style.display = 'none';
-        });
-    }
-
-    // Live Update
     function u() {
         const g = (id) => document.getElementById(id).value;
-        document.getElementById('o-name').innerText = g('i-name') || "YOUR NAME";
-        document.getElementById('o-fname').innerText = g('i-fname') || "---";
-        document.getElementById('o-title').innerText = g('i-title') || "Job Title";
-        document.getElementById('o-ph').innerText = g('i-ph') || "---";
-        document.getElementById('o-em').innerText = g('i-em') || "---";
-        document.getElementById('o-ad').innerText = g('i-ad') || "---";
-        document.getElementById('o-cn').innerText = g('i-cn') || "---";
-        document.getElementById('o-obj').innerText = g('i-obj') || "Objective...";
+        const box = document.getElementById('cv-box');
+        box.className = g('th-select');
 
-        const list = (id, target) => {
-            const lines = g(id).split('\n');
-            let h = '';
-            lines.forEach(l => { if(l.trim()) h += `<div class="t-item"><b>${l.trim()}</b><p>Details and achievements.</p></div>`; });
-            document.getElementById(target).innerHTML = h;
-        };
-        list('i-exp', 'o-exp');
-        list('i-edu', 'o-edu');
-        
+        document.getElementById('o-name').innerText = g('i-name') || "NAME";
+        document.getElementById('o-title').innerText = g('i-title') || "Title";
+        document.getElementById('o-fname').innerText = g('i-fname') ? "S/O: " + g('i-fname') : "S/O: Father Name";
+        document.getElementById('o-obj').innerText = g('i-obj') || "Enter objective...";
+
+        const lines = g('i-exp').split('\n');
+        let h = '';
+        lines.forEach(l => { if(l.trim()) h += `<div class="item"><b>${l.trim()}</b><p>Details here.</p></div>`; });
+        document.getElementById('o-exp').innerHTML = h;
+
         const sks = g('i-sk').split(',');
         document.getElementById('o-sk').innerHTML = sks.map(s => s.trim() ? `• ${s.trim()}<br>` : '').join('');
     }
 
-    // Fix High Quality Download
-    function dl() {
-        const element = document.getElementById('cv-box');
-        // Force rendering and wait a bit
-        element.style.transform = "none"; 
-        
+    function preDl() {
+        document.getElementById('ad-modal').style.display = 'flex';
+    }
+
+    function finalDl() {
+        document.getElementById('ad-modal').style.display = 'none';
+        const el = document.getElementById('cv-box');
+        // Reset scale for high quality capture
+        const originalTransform = el.style.transform;
+        el.style.transform = 'none';
+
         const opt = {
             margin: 0,
-            filename: 'Professional_CV.pdf',
-            image: { type: 'jpeg', quality: 1.0 },
-            html2canvas: { 
-                scale: 3, 
-                useCORS: true, 
-                logging: false,
-                letterRendering: true,
-                windowWidth: 1200 
-            },
+            filename: 'Elite_CV.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 3, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
-            // After PDF generation, restore scaling if on mobile
-            if(window.innerWidth < 900) {
-                u(); // Refresh view
-            }
+        html2pdf().set(opt).from(el).toPdf().get('pdf').then(() => {
+            el.style.transform = originalTransform;
         }).save();
     }
+
+    document.getElementById('up-img').onchange = function(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            document.getElementById('o-img').src = ev.target.result;
+            document.getElementById('o-img').style.display = 'block';
+            document.getElementById('o-ph').style.display = 'none';
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    };
     u();
 </script>
 </body>
