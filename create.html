@@ -3,205 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro CV Maker 2030 - Fiaz Alvi</title>
+    <title>Pro CV Maker - Premium Design</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --grey: #f3f4f6; --text: #1f2937; }
-        body { font-family: 'Poppins', sans-serif; background: #e5e7eb; margin: 0; padding: 10px; color: var(--text); }
+        /* CSS Reset for PDF consistency */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: #e5e7eb; padding: 10px; color: #333; }
         
-        .main-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1400px; margin: auto; }
+        .main-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1500px; margin: auto; }
         
-        /* Input Form */
-        .editor { background: white; padding: 25px; border-radius: 12px; height: 90vh; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .section-title { background: var(--grey); padding: 8px; border-radius: 5px; margin: 20px 0 10px; font-weight: 600; font-size: 14px; color: var(--primary); text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
+        /* 1. Input Editor Panel */
+        .editor { background: white; padding: 25px; border-radius: 12px; height: 92vh; overflow-y: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .section-title { background: #f3f4f6; padding: 10px; border-radius: 6px; margin: 25px 0 12px; font-weight: 600; font-size: 15px; color: #2563eb; text-transform: uppercase; border-left: 4px solid #2563eb;}
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
         
-        /* CV Preview Container */
-        .preview-pane { background: #525659; display: flex; justify-content: center; align-items: flex-start; padding: 20px; border-radius: 12px; height: 90vh; overflow-y: auto; }
+        /* Design Buttons & Progress Bars */
+        .color-picker { display: flex; gap: 10px; margin-top: 15px; }
+        .color-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        /* 2. CV Preview Panel (A4 Container) */
+        .preview-pane { background: #525659; display: flex; justify-content: center; align-items: flex-start; padding: 20px; border-radius: 12px; height: 92vh; overflow-y: auto; }
         
-        /* THE ACTUAL CV (A4 STAGING) */
+        /* ---------------------------------------------------
+           THE ACTUAL CV RENDERED AREA (A4 STAGING)
+           Strictly configured for single-page PDF output
+        --------------------------------------------------- */
         #cv-render { 
             background: white; 
-            width: 210mm; 
+            width: 210mm; /* A4 Width */
             min-height: 296mm; /* Strictly A4 height to prevent 2nd page */
-            padding: 15mm; 
             box-sizing: border-box; 
-            position: relative; 
-            font-size: 12px; 
-            line-height: 1.4;
+            display: grid; 
+            grid-template-columns: 2fr 3fr; /* 2-Column Sidebar Layout */
+            font-size: 14px; 
+            line-height: 1.5;
+            position: relative;
+            --primary-accent: #ffc107; /* Yellow Accent from image */
+            --dark-sidebar: #1e293b; /* Dark Navy Sidebar */
         }
 
-        /* 6 DESIGN CLASSES */
-        .design-standard { border-top: 15px solid var(--primary); }
-        .design-modern { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-        .design-executive { background: #fdfdfd; border-left: 10px solid #1e293b; }
-        .design-clean { text-align: center; }
-        .design-sidebar { display: flex; flex-direction: row-reverse; gap: 20px; }
-        .design-minimal { border: 1px solid #eee; }
+        /* ----- LEFT SIDEBAR (Dark) ----- */
+        .cv-sidebar {
+            background-color: var(--dark-sidebar);
+            color: white;
+            padding: 20mm 12mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .cv-photo-container {
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            border: 4px solid white;
+            overflow: hidden;
+            margin-bottom: 25px;
+            background: #f1f5f9;
+        }
+        .cv-photo-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Photo Styles */
-        .photo-box { width: 110px; height: 110px; border-radius: 8px; object-fit: cover; background: #eee; margin-bottom: 10px; border: 2px solid var(--primary); }
+        .sidebar-header {
+            width: 100%;
+            text-align: left;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            color: white;
+        }
+        .sidebar-header i { color: var(--primary-accent); font-size: 18px; }
+        .sidebar-header hr { flex-grow: 1; border: 0; border-top: 1px solid rgba(255,255,255,0.2); }
 
-        /* Sidebar for Design 2 & 5 */
-        .cv-side { background: #f8fafc; padding: 15px; border-radius: 8px; height: 100%; }
+        .cv-sidebar p { width: 100%; color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 8px; font-weight: 300; }
+        .label-yellow { color: var(--primary-accent); font-weight: 500; }
 
-        .download-btn { width: 100%; background: #059669; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        /* Skills Progress Bars (Dark Sidebar) */
+        .skill-item { width: 100%; margin-bottom: 12px; color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 400;}
+        .skill-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 5px; overflow: hidden; }
+        .skill-bar-fill { height: 100%; background: var(--primary-accent); border-radius: 10px; width: 0%; transition: width 0.5s; }
 
-        /* Responsive */
-        @media (max-width: 1000px) {
-            .main-wrapper { grid-template-columns: 1fr; }
-            .preview-pane { height: auto; padding: 0; background: transparent; }
-            #cv-render { transform: scale(0.45); transform-origin: top left; margin-bottom: -150mm; }
+        /* ----- RIGHT MAIN CONTENT (Light) ----- */
+        .cv-main {
+            padding: 20mm 15mm;
+            background: white;
+            color: #333;
         }
 
-        /* Ad Pop-up */
-        #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 999; align-items: center; justify-content: center; text-align: center; color: white; }
+        .main-title-block { margin-bottom: 30px; }
+        .main-title-block h1 { font-size: 36px; font-weight: 600; margin: 0; }
+        .main-title-block p { font-size: 18px; color: #666; font-weight: 300; margin-top: 2px; }
+
+        .main-header {
+            width: 100%;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 18px;
+        }
+        .main-header i { color: var(--primary-accent); font-size: 20px; }
+        .main-header hr { flex-grow: 1; border: 0; border-top: 1px solid #ddd; }
+
+        .entry-block { margin-bottom: 18px; position: relative; padding-left: 20px; }
+        .entry-block::before { content: ''; position: absolute; left: 0; top: 6px; width: 8px; height: 8px; background: var(--primary-accent); border-radius: 50%; }
+        .entry-block h4 { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .entry-subtext { font-size: 13px; color: #666; margin-bottom: 4px; font-weight: 300; }
+        .entry-desc { font-size: 13px; color: #555; line-height: 1.6; }
+
+        .download-btn { width: 100%; background: #059669; color: white; padding: 18px; border: none; border-radius: 10px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .download-btn:hover { background: #047857; }
+
+        /* Ad Pop-up Modal */
+        #ad-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; align-items: center; justify-content: center; text-align: center; color: white; }
     </style>
 </head>
 <body>
 
 <div class="main-wrapper">
     <div class="editor">
-        <h2 style="margin-top:0">Pro CV Builder 2030</h2>
+        <h2 style="margin-top:0">Professional CV Maker</h2>
+        <p style="color:#666; font-size:14px;">Fill details, see real-time preview, download one-page PDF.</p>
         
         <div class="section-title">1. Personal Info</div>
         <input type="file" accept="image/*" onchange="previewImg(event)">
-        <input type="text" id="in-name" placeholder="Full Name" oninput="draw()">
-        <input type="text" id="in-fname" placeholder="Father Name (Optional)" oninput="draw()">
-        <input type="text" id="in-phone" placeholder="Phone Number" oninput="draw()">
+        <input type="text" id="in-name" placeholder="Full Name (e.g. Nina Lane)" oninput="draw()">
+        <input type="text" id="in-title" placeholder="Job Title (e.g. Graphic Designer)" oninput="draw()">
         <input type="text" id="in-email" placeholder="Email Address" oninput="draw()">
-        <input type="text" id="in-address" placeholder="Address (City)" oninput="draw()">
-        <input type="text" id="in-cnic" placeholder="CNIC (Optional)" oninput="draw()">
+        <input type="text" id="in-phone" placeholder="Phone Number" oninput="draw()">
+        <input type="text" id="in-web" placeholder="Website/Portfolio URL" oninput="draw()">
+        <input type="text" id="in-address" placeholder="Address (City, Country)" oninput="draw()">
 
         <div class="section-title">2. Profile Objective</div>
-        <textarea id="in-obj" placeholder="Objective (e.g. Seeking opportunity...)" rows="3" oninput="draw()"></textarea>
+        <textarea id="in-profile" placeholder="Short introduction about yourself..." rows="4" oninput="draw()"></textarea>
 
-        <div class="section-title">3. Education</div>
-        <textarea id="in-edu" placeholder="Matric/Inter - Institute - Year - Marks" rows="3" oninput="draw()"></textarea>
-
-        <div class="section-title">4. Skills & Languages</div>
-        <input type="text" id="in-skills" placeholder="Skills (MS Word, Excel, Python)" oninput="draw()">
-        <input type="text" id="in-langs" placeholder="Languages (Urdu, English)" oninput="draw()">
-
-        <div class="section-title">5. Experience & Projects</div>
-        <textarea id="in-exp" placeholder="Job Title - Company - Duration" rows="3" oninput="draw()"></textarea>
-        <textarea id="in-proj" placeholder="Project Name - Description" rows="2" oninput="draw()"></textarea>
-
-        <div class="section-title">6. Certificates</div>
-        <input type="text" id="in-cert" placeholder="Course Name - Institute" oninput="draw()">
-
-        <div class="section-title">Select Pro Design</div>
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
-            <button onclick="setD('standard')" style="padding:5px">Standard</button>
-            <button onclick="setD('modern')" style="padding:5px">Modern 2-Col</button>
-            <button onclick="setD('executive')" style="padding:5px">Executive</button>
-            <button onclick="setD('clean')" style="padding:5px">Clean Central</button>
-            <button onclick="setD('sidebar')" style="padding:5px">Right Side</button>
-            <button onclick="setD('minimal')" style="padding:5px">Minimal</button>
+        <div class="section-title">3. Skills (Bars)</div>
+        <div style="display:grid; grid-template-columns: 1fr 60px; gap:5px">
+            <input type="text" id="in-s1-n" placeholder="Skill 1 (e.g. Photoshop)" oninput="draw()"> <input type="number" id="in-s1-p" placeholder="%" min="0" max="100" oninput="draw()">
+            <input type="text" id="in-s2-n" placeholder="Skill 2 (e.g. Illustrator)" oninput="draw()"> <input type="number" id="in-s2-p" placeholder="%" min="0" max="100" oninput="draw()">
+            <input type="text" id="in-s3-n" placeholder="Skill 3 (e.g. Web Design)" oninput="draw()"> <input type="number" id="in-s3-p" placeholder="%" min="0" max="100" oninput="draw()">
         </div>
+
+        <div class="section-title">4. Experience</div>
+        <textarea id="in-exp1" placeholder="Title - Company | City - Duration (e.g. June 2020 – Present) \n\n Key description line..." rows="6" oninput="draw()"></textarea>
+
+        <div class="section-title">5. Education</div>
+        <textarea id="in-edu1" placeholder="Degree Name - Institute | City - Graduated Year" rows="3" oninput="draw()"></textarea>
+
+        <div class="section-title">6. Interests (Sidebar)</div>
+        <input type="text" id="in-int" placeholder="Interests (comma separated: Photography, Traveling)" oninput="draw()">
 
         <button class="download-btn" onclick="startDownload()">Download One-Page PDF</button>
     </div>
 
     <div class="preview-pane">
-        <div id="cv-render" class="design-standard">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                    <h1 id="out-name" style="margin:0; font-size:28px; color:var(--primary)">Aapka Naam</h1>
-                    <p id="out-contact" style="margin:5px 0; color:#666">Phone | Email | Address</p>
+        <div id="cv-render">
+            
+            <div class="cv-sidebar">
+                <div class="cv-photo-container">
+                    <img id="out-img" src="https://via.placeholder.com/130?text=Photo" alt="Profile">
                 </div>
-                <img id="out-img" src="" class="photo-box" style="display:none">
+
+                <div class="sidebar-header">
+                    <i class="fas fa-phone"></i>
+                    <span>CONTACT</span>
+                    <hr>
+                </div>
+                <p><span class="label-yellow">Email:</span> <br> <span id="out-email">nina.lane@email.com</span></p>
+                <p><span class="label-yellow">Phone:</span> <br> <span id="out-phone">+1 234 567-8900</span></p>
+                <p><span class="label-yellow">Website:</span> <br> <span id="out-web">ninalane.com</span></p>
+                <p><span class="label-yellow">Address:</span> <br> <span id="out-address">City, Country</span></p>
+
+                <div class="sidebar-header">
+                    <i class="fas fa-tools"></i>
+                    <span>SKILLS</span>
+                    <hr>
+                </div>
+                <div class="skill-item">
+                    <span id="out-s1-n">Photoshop</span>
+                    <div class="skill-bar-bg"><div id="out-s1-p" class="skill-bar-fill" style="width: 80%;"></div></div>
+                </div>
+                <div class="skill-item">
+                    <span id="out-s2-n">Illustrator</span>
+                    <div class="skill-bar-bg"><div id="out-s2-p" class="skill-bar-fill" style="width: 70%;"></div></div>
+                </div>
+                <div class="skill-item">
+                    <span id="out-s3-n">Web Design</span>
+                    <div class="skill-bar-bg"><div id="out-s3-p" class="skill-bar-fill" style="width: 60%;"></div></div>
+                </div>
+
+                <div class="sidebar-header">
+                    <i class="fas fa-heart"></i>
+                    <span>INTERESTS</span>
+                    <hr>
+                </div>
+                <p id="out-int" style="white-space: pre-line;">Minimalist Art\nUrban Photography</p>
+
             </div>
 
-            <div id="layout-body">
-                <div class="main-content">
-                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Objective</h3>
-                    <p id="out-obj">Professional objective yahan ayega...</p>
-
-                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Education</h3>
-                    <div id="out-edu" style="white-space: pre-line;">Education details...</div>
-
-                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Experience</h3>
-                    <div id="out-exp" style="white-space: pre-line;">Work experience...</div>
-                    
-                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Projects</h3>
-                    <div id="out-proj" style="white-space: pre-line;">Projects details...</div>
+            <div class="cv-main">
+                <div class="main-title-block">
+                    <h1 id="out-name">Nina Lane</h1>
+                    <p id="out-title">Graphic Designer</p>
                 </div>
 
-                <div class="side-content">
-                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Skills</h3>
-                    <p id="out-skills">Skills list...</p>
-                    
-                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Languages</h3>
-                    <p id="out-langs">Urdu, English</p>
-                    
-                    <h3 style="border-bottom:1px solid #ddd; padding-bottom:5px">Personal Details</h3>
-                    <p id="out-personal">Father Name: - <br> CNIC: -</p>
+                <div class="main-header">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                    <hr>
                 </div>
+                <p id="out-profile" class="entry-desc">Creative graphic designer with 5+ years' experience in impactful print and digital visuals.</p>
+
+                <div class="main-header">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Experience</span>
+                    <hr>
+                </div>
+                <div class="entry-block">
+                    <h4 id="out-exp1-t">Senior Graphic Designer</h4>
+                    <p id="out-exp1-c" class="entry-subtext">Brightline Agency | New York, NY -- June 2020 – Present</p>
+                    <p id="out-exp1-d" class="entry-desc">Boosted engagement by 30% through brand campaigns.</p>
+                </div>
+
+                <div class="main-header">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Education</span>
+                    <hr>
+                </div>
+                <div class="entry-block">
+                    <h4 id="out-edu1-t">Bachelor of Fine Arts in Graphic Design</h4>
+                    <p id="out-edu1-c" class="entry-subtext">Parsons School of Design | New York, NY -- Graduated: 2017</p>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
 <div id="ad-modal">
-    <div style="background:white; padding:30px; color:black; border-radius:15px; width:320px">
+    <div style="background:white; padding:30px; color:black; border-radius:15px; width:340px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
         <h3>Generating PDF...</h3>
-        <div style="width:100%; height:250px; background:#eee; margin:15px 0">AdSense Space</div>
-        <button id="dl-ready" style="display:none; padding:10px 20px" onclick="finalPDF()">Download Now</button>
+        <p style="color:#666; font-size:14px; margin-top:5px;">Please wait while we optimize your single-page download.</p>
+        <div style="width:100%; height:250px; background:#eee; margin:20px 0; border:1px solid #ddd;">[Google AdSense Ad Slot]</div>
+        <button id="dl-ready" style="display:none; padding:12px 24px; background:#059669; color:white; border:none; border-radius:8px; cursor:pointer;" onclick="finalPDF()">Download Now</button>
     </div>
 </div>
 
 <script>
+    // Real-time update function
     function draw() {
-        document.getElementById('out-name').innerText = document.getElementById('in-name').value || 'Aapka Naam';
+        // Sidebar Content
+        document.getElementById('out-email').innerText = document.getElementById('in-email').value || 'nina.lane@email.com';
+        document.getElementById('out-phone').innerText = document.getElementById('in-phone').value || '+1 234 567-8900';
+        document.getElementById('out-web').innerText = document.getElementById('in-web').value || 'ninalane.com';
+        document.getElementById('out-address').innerText = document.getElementById('in-address').value || 'City, Country';
         
-        let contact = `${document.getElementById('in-phone').value} | ${document.getElementById('in-email').value} | ${document.getElementById('in-address').value}`;
-        document.getElementById('out-contact').innerText = contact;
+        // Skills Content & Bars
+        document.getElementById('out-s1-n').innerText = document.getElementById('in-s1-n').value || 'Skill 1';
+        document.getElementById('out-s1-p').style.width = (document.getElementById('in-s1-p').value || 80) + '%';
         
-        document.getElementById('out-obj').innerText = document.getElementById('in-obj').value;
-        document.getElementById('out-edu').innerText = document.getElementById('in-edu').value;
-        document.getElementById('out-exp').innerText = document.getElementById('in-exp').value;
-        document.getElementById('out-proj').innerText = document.getElementById('in-proj').value;
-        document.getElementById('out-skills').innerText = document.getElementById('in-skills').value;
-        document.getElementById('out-langs').innerText = document.getElementById('in-langs').value;
+        document.getElementById('out-s2-n').innerText = document.getElementById('in-s2-n').value || 'Skill 2';
+        document.getElementById('out-s2-p').style.width = (document.getElementById('in-s2-p').value || 70) + '%';
         
-        let personal = `Father Name: ${document.getElementById('in-fname').value} <br> CNIC: ${document.getElementById('in-cnic').value}`;
-        document.getElementById('out-personal').innerHTML = personal;
+        document.getElementById('out-s3-n').innerText = document.getElementById('in-s3-n').value || 'Skill 3';
+        document.getElementById('out-s3-p').style.width = (document.getElementById('in-s3-p').value || 60) + '%';
+        
+        // Interests (Sidebar)
+        document.getElementById('out-int').innerText = (document.getElementById('in-int').value || 'Minimalist Art').split(',').join('\n');
+
+        // Main Content
+        document.getElementById('out-name').innerText = document.getElementById('in-name').value || 'Nina Lane';
+        document.getElementById('out-title').innerText = document.getElementById('in-title').value || 'Graphic Designer';
+        document.getElementById('out-profile').innerText = document.getElementById('in-profile').value || 'Creative designer with 5+ years experience...';
+
+        // Experience & Education (Splitting lines for display)
+        parseTextArea('in-exp1', 'out-exp1-t', 'out-exp1-c', 'out-exp1-d', 'Title - Company - Duration\nDescription');
+        parseTextArea('in-edu1', 'out-edu1-t', 'out-edu1-c', null, 'Degree - Institute - Year');
     }
 
+    // Function to parse textarea into Title, Company/Date, and Description
+    function parseTextArea(inputId, outTitleId, outSubId, outDescId, placeholder) {
+        const text = document.getElementById(inputId).value;
+        if(!text) {
+            document.getElementById(outTitleId).innerText = placeholder.split('\n')[0];
+            document.getElementById(outSubId).innerText = '';
+            if(outDescId) document.getElementById(outDescId).innerText = '';
+            return;
+        }
+        const lines = text.split('\n');
+        document.getElementById(outTitleId).innerText = lines[0] || 'Title';
+        document.getElementById(outSubId).innerText = lines[1] || '';
+        if(outDescId) {
+            document.getElementById(outDescId).innerText = lines.slice(2).join(' ') || '';
+        }
+    }
+
+    // Image Upload & Preview
     function previewImg(e) {
         const reader = new FileReader();
-        reader.onload = () => {
-            const img = document.getElementById('out-img');
-            img.src = reader.result;
-            img.style.display = 'block';
-        };
+        reader.onload = () => { document.getElementById('out-img').src = reader.result; };
         reader.readAsDataURL(e.target.files[0]);
     }
 
-    function setD(d) {
-        document.getElementById('cv-render').className = 'design-' + d;
-    }
-
+    // Ad Pop-up Logic
     function startDownload() {
         document.getElementById('ad-modal').style.display = 'flex';
-        setTimeout(() => { document.getElementById('dl-ready').style.display = 'block'; }, 2000);
+        // After 2 seconds, show the download button
+        setTimeout(() => { document.getElementById('dl-ready').style.display = 'inline-block'; }, 2000);
     }
 
+    // Final PDF Generation
     function finalPDF() {
         document.getElementById('ad-modal').style.display = 'none';
         const element = document.getElementById('cv-render');
-        // Setting to force single page
         const opt = {
             margin: 0,
-            filename: 'Professional_CV_2030.pdf',
+            filename: 'Professional_CV_Premium.pdf',
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
     }
+    
+    // Initial draw to fill placeholders
+    draw();
 </script>
 </body>
 </html>
